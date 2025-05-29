@@ -1,2 +1,17 @@
 # Jupyter Notebook checkpoints
-.ipynb_checkpoints/
+topo-learning/.ipynb_checkpoints/
+# Jupyter notebook outputs
+topo-learning/output/*
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.toc
+

@@ -1,0 +1,245 @@
+\input{metadata}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\selectlanguage{slovene}
+\frontmatter
+\setcounter{page}{1} %
+\renewcommand{\thepage}{}       % preprečimo težave s številkami strani v kazalu
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%naslovnica
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \thispagestyle{empty}%
+   \begin{center}
+    {\large\sc Univerza v Ljubljani\\%
+%      Fakulteta za elektrotehniko\\% za študijski program Multimedija
+%      Fakulteta za upravo\\% za študijski program Upravna informatika
+      Fakulteta za računalništvo in informatiko\\%
+      Fakulteta za matematiko in fiziko\\% za študijski program Računalništvo in matematika
+     }
+    \vskip 10em%
+    {\autfont \tauthor\par}%
+    {\titfont \ttitle \par}%
+    {\vskip 3em \textsc{DIPLOMSKO DELO\\[5mm]         % dodal Solina za ostale študijske programe
+%    VISOKOŠOLSKI STROKOVNI ŠTUDIJSKI PROGRAM\\ PRVE STOPNJE\\ RAČUNALNIŠTVO IN INFORMATIKA}\par}%
+%     UNIVERZITETNI  ŠTUDIJSKI PROGRAM\\ PRVE STOPNJE\\ RAČUNALNIŠTVO IN INFORMATIKA}\par}%
+%    INTERDISCIPLINARNI UNIVERZITETNI\\ ŠTUDIJSKI PROGRAM PRVE STOPNJE\\ MULTIMEDIJA}\par}%
+%    INTERDISCIPLINARNI UNIVERZITETNI\\ ŠTUDIJSKI PROGRAM PRVE STOPNJE\\ UPRAVNA INFORMATIKA}\par}%
+    INTERDISCIPLINARNI UNIVERZITETNI\\ ŠTUDIJSKI PROGRAM PRVE STOPNJE\\ RAČUNALNIŠTVO IN MATEMATIKA}\par}%
+    \vfill\null%
+% izberite pravi habilitacijski naziv mentorja!
+    {\large \textsc{Mentor}: doc. dr. Dejan Govc\par}%
+%   {\large \textsc{Somentor}:  viš. pred./doc./izr. prof./prof. dr.  Martin Krpan \par}%
+    {\vskip 2em \large Ljubljana, \the\year \par}%
+\end{center}
+% prazna stran
+%\clearemptydoublepage      
+% izjava o licencah itd. se izpiše na hrbtni strani naslovnice
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%copyright stran
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\thispagestyle{empty}
+
+\vspace*{5cm}
+{\small \noindent
+To delo je ponujeno pod licenco \textit{Creative Commons Priznanje avtorstva-Deljenje pod enakimi pogoji 2.5 Slovenija} (ali novej\v so razli\v cico).
+To pomeni, da se tako besedilo, slike, grafi in druge sestavine dela kot tudi rezultati diplomskega dela lahko prosto distribuirajo,
+reproducirajo, uporabljajo, priobčujejo javnosti in predelujejo, pod pogojem, da se jasno in vidno navede avtorja in naslov tega
+dela in da se v primeru spremembe, preoblikovanja ali uporabe tega dela v svojem delu, lahko distribuira predelava le pod
+licenco, ki je enaka tej.
+Podrobnosti licence so dostopne na spletni strani \href{http://creativecommons.si}{creativecommons.si} ali na Inštitutu za
+intelektualno lastnino, Streliška 1, 1000 Ljubljana.
+
+\vspace*{1cm}
+\begin{center}% 0.66 / 0.89 = 0.741573033707865
+\CcImageCc{0.741573033707865}\hspace*{1ex}\CcImageBy{1}\hspace*{1ex}\CcImageSa{1}%
+\end{center}
+}
+
+\vspace*{1cm}
+{\small \noindent
+Izvorna koda diplomskega dela, njeni rezultati in v ta namen razvita programska oprema je ponujena pod licenco GNU General Public License,
+različica 3 (ali novejša). To pomeni, da se lahko prosto distribuira in/ali predeluje pod njenimi pogoji.
+Podrobnosti licence so dostopne na spletni strani \url{http://www.gnu.org/licenses/}.
+}
+
+\vfill
+\begin{center} 
+\ \\ \vfill
+{\em
+Besedilo je oblikovano z urejevalnikom besedil \LaTeX.}
+\end{center}
+
+% prazna stran
+\clearemptydoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% stran 3 med uvodnimi listi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\thispagestyle{empty}
+\
+\vfill
+
+\bigskip
+\noindent\textbf{Kandidat:} Maj Alter\\
+\noindent\textbf{Naslov:} Topologija učenja nevronskih mrež\\
+% vstavite ustrezen naziv študijskega programa!
+\noindent\textbf{Vrsta naloge:} Diplomska naloga na interdisciplinarnem univerzitetnem študijskem programu prve stopnje Računalništvo in matematika \\
+% izberite pravi habilitacijski naziv mentorja!
+\noindent\textbf{Mentor:} doc. dr. Dejan Govc\\
+%\noindent\textbf{Somentor:} isto kot za mentorja
+
+\bigskip
+\noindent\textbf{Opis:}\\
+TODO: Besedilo teme diplomskega dela študent prepiše iz študijskega informacijskega sistema, kamor ga je vnesel mentor. 
+V nekaj stavkih bo opisal, kaj pričakuje od kandidatovega diplomskega dela. 
+Kaj so cilji, kakšne metode naj uporabi, morda bo zapisal tudi ključno literaturo.
+
+\bigskip
+\noindent\textbf{Title:} Topologija učenja nevronskih mrež
+
+\bigskip
+\noindent\textbf{Description:}\\
+TODO: opis diplome v angleščini
+
+\vfill
+
+
+
+\vspace{2cm}
+
+% prazna stran
+\clearemptydoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% zahvala
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\thispagestyle{empty}\mbox{}\vfill\null\it%
+\noindent
+Na tem mestu bi se rad zahvalil družini za podporo v času mojega študija in mentorju doc. dr. Dejanu Govcu za vso pomoč pri pisanju diplomskega dela.
+\rm\normalfont
+
+% prazna stran
+\clearemptydoublepage
+
+% prazna stran
+\clearemptydoublepage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% kazalo
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{empty}
+\def\thepage{}% preprečimo težave s številkami strani v kazalu
+\tableofcontents{}
+
+
+% prazna stran
+\clearemptydoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% seznam kratic
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter*{Seznam uporabljenih kratic}
+
+\noindent\begin{tabular}{p{0.11\textwidth}|p{.39\textwidth}|p{.39\textwidth}}    % po potrebi razširi prvo kolono tabele na račun drugih dveh!
+  {\bf kratica} & {\bf angleško}                              & {\bf slovensko} \\ \hline
+  {\bf TDA}      & topological data analysis               & topološka analiza podatkov \\
+  {\bf PCA}      & principal component analysis               & metoda glavnih komponent \\
+
+ % {\bf DBMS} & database management system & sistem za upravljanje podatkovnih baz \\
+ % {\bf SVM}   & support vector machine              & metoda podpornih vektorjev \\
+%  \dots & \dots & \dots \\
+\end{tabular}
+
+
+% prazna stran
+\clearemptydoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% povzetek
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\addcontentsline{toc}{chapter}{Povzetek}
+\chapter*{Povzetek}
+
+\noindent\textbf{Naslov:} \ttitle
+\bigskip
+
+\noindent\textbf{Avtor:} \tauthor
+\bigskip
+
+%\noindent\textbf{Povzetek:} 
+\noindent Z nevronskimi mrežami lahko rešimo širok nabor problemov, kljub temu pa mnogokrat težko interpretiramo, kaj se ti modeli zares naučijo. Uteži v nevronski mreži se v postopku učenja razvijejo tako, da so zadani problem sposobne rešiti. V diplomskem delu bomo spoznali metodo, s katero lahko s pomočjo topološke analize podatkov zajamemo strukturo sestavljeno iz uteži, ki nastane med učenjem. Delo temelji na članku \cite{Gabella_2021}, kjer je metoda opisana in predstavljena na preprostem primeru. Opisali bomo matematično ozadje in koncepte s pomočjo katerih lahko na podlagi algoritma Mapper, grafično interpretiramo nevronsko mrežo.  \\ \\
+
+
+\bigskip
+
+\noindent\textbf{Ključne besede:} \tkeywords.
+% prazna stran
+\clearemptydoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% abstract
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\selectlanguage{english}
+\addcontentsline{toc}{chapter}{Abstract}
+\chapter*{Abstract}
+
+\noindent\textbf{Title:} \ttitleEn
+\bigskip
+
+\noindent\textbf{Author:} \tauthor
+\bigskip
+
+%\noindent\textbf{Abstract:} 
+\noindent With neural networks, we can solve a wide range of problems, yet it is often difficult to interpret what these models actually learn. The weights in a neural network develop during the learning process to solve the given problem. In this thesis, we will explore a method by which we can use topological data analysis to capture the structure composed of weights that arises during learning. The work is based on the article [1], where the method is described and demonstrated on a simple example. We will describe the mathematical background and concepts that allow us to graphically interpret the neural network based on the Mapper algorithm.
+\bigskip
+
+\noindent\textbf{Keywords:} \tkeywordsEn.
+\selectlanguage{slovene}
+% prazna stran
+\clearemptydoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% vsebina
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mainmatter
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+%\chapter{Uvod}
+\include{poglavja/uvod}
+
+\include{poglavja/nevronske_mreze}
+
+\include{poglavja/pca}
+
+\include{poglavja/tda}
+
+\include{poglavja/mapper}
+
+\include{poglavja/zakljucek}
+
+\cleardoublepage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% literatura
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\addcontentsline{toc}{chapter}{Literatura}
+
+
+%\printbibliography[heading=bibintoc,type=article,title={Članki v revijah}]
+%https://www.overleaf.com/project/609ce2055f917cb2f776732e
+%\printbibliography[heading=bibintoc,type=inproceedings,title={Članki v zbornikih}]
+
+%\printbibliography[heading=bibintoc,type=incollection,title={Poglavja v knjigah}]
+
+\printbibliography[heading=bibintoc]%,title={Celotna literatura}]
+
+\end{document}
+
