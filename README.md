@@ -1,10 +1,23 @@
-# Topology of Learning in Artificial Neural Networks
+# Undergraduate Thesis – Topology of Learning in Neural Networks
 
-Companion code for the paper https://arxiv.org/abs/1902.08160
+This repository contains the source files for my undergraduate thesis titled:
 
-The main goal is to monitor the evolution of neural network weights during training by representing them as a Mapper graph.
+**"Topologija učenja v nevronskih mrežah"**  
+*(Topology of Learning in Neural Networks)*
 
-We used three standard datasets for the training: 
-* MNIST
-* Fashion-MNIST
-* CIFAR-10
+---
+
+## Project Structure
+
+```text
+.
+│   ├── main.tex
+├── thesis/          # LaTeX source for the written thesis
+│   ├── metadata.tex
+│   ├── literatura.bib
+│   ├── poglavja/    # Chapters
+│   └── slike/       # Figures and diagrams
+│
+└── topo-learning/   # Jupyter notebook for experiments
+    ├── topo_learning.ipynb
+    └── output/      # Plots and other artifacts
