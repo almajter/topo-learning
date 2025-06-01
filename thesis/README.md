@@ -1,9 +1,3 @@
-# thesis-BUN-BVS
-
-LaTeX template for writing undergraduate theses at the Faculty of Computer and Information Science, University of Ljubljana (UL FRI).
-
----
-
 ## About This Repository
 
 This project contains my undergraduate thesis based on the official FRI UL template, cloned from the repository:
@@ -15,3 +9,26 @@ The template was adapted to include my work titled:
 > *(Topology of Learning in Neural Networks)*
 
 ---
+
+## How to Compile the Thesis
+
+### Prerequisites
+
+Install a LaTeX distribution:
+
+#### **macOS**
+```bash
+brew install --cask mactex
+```
+
+## Compile the thesis
+This will automatically compile the thesis and generate main.pdf.
+```bash
+latexmk -pdf main.tex
+```
+
+## Clean Up Auxiliary Files
+To clean up temporary files:
+```bash
+latexmk -c
+```
