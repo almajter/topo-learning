@@ -4,10 +4,10 @@ name: Build LaTeX PDF
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -28,5 +28,5 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: thesis/main-pdf
+          name: thesis/main.pdf
           path: thesis/main.pdf
