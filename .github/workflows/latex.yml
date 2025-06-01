@@ -1,0 +1,38 @@
+# .github/workflows/latex.yml
+
+name: Build LaTeX PDF
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # 2. Set up LaTeX (texlive) and run latexmk on main.tex
+      #
+      #    This action automatically installs a TeX Live environment
+      #    and invokes `latexmk -pdf` on the specified root_file.
+      #
+      - name: Compile LaTeX to PDF
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: thesis/main.tex
+          latexmk_use_lualatex: false
+          latexmk_use_xelatex: false
+
+      # 3. Upload the generated PDF as an artifact
+      - name: Upload main.pdf
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: thesis/main-pdf
+          path: thesis/main.pdf
