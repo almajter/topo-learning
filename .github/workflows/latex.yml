@@ -12,21 +12,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-
       - name: Compile LaTeX to PDF
-        uses: xu-cheng/latex-action@v2
+        uses: xu-cheng/latex-action@v3
         with:
           root_file: thesis/main.tex
-          latexmk_use_lualatex: false
-          latexmk_use_xelatex: false
-
-      - name: Upload main.pdf
-        if: success()
-        uses: actions/upload-artifact@v2
-        with:
-          name: thesis-main-pdf
-          path: thesis/main.pdf
+      - name: Verify PDF was generated
+        run: |
+          echo "Contents of thesis/ directory:"
+          ls -lh thesis/
+          if [ -f thesis/main.pdf ]; then
+            echo "thesis/main.pdf exists."
+          else
+            echo "ERROR: thesis/main.pdf not found!" >&2
+            exit 1
+          fi
