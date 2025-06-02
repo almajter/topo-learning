@@ -16,4 +16,6 @@ topo-learning/output/*
 *.run.xml
 *.toc
 
+thesis/main.pdf
+
 .vscode/
