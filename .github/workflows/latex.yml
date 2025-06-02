@@ -20,13 +20,8 @@ jobs:
         with:
           root_file: thesis/main.tex
           work_in_root_file_dir: true
-      - name: Verify PDF was generated
-        run: |
-          echo "Contents of thesis/ directory:"
-          ls -lh thesis/
-          if [ -f thesis/main.pdf ]; then
-            echo "thesis/main.pdf exists."
-          else
-            echo "ERROR: thesis/main.pdf not found!" >&2
-            exit 1
-          fi
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: thesis
+          path: thesis/main.pdf
