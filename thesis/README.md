@@ -39,4 +39,4 @@ latexmk -c
 ```
 
 ## VS Code
-> Install LaTeX Workshop extension
+- Install LaTeX Workshop extension

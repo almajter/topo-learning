@@ -15,8 +15,8 @@ This repository contains the source files for my undergraduate thesis titled:
 ├── thesis/          # LaTeX source for the written thesis
 │   ├── metadata.tex
 │   ├── literatura.bib
-│   ├── poglavja/    # Chapters
-│   └── slike/       # Figures and diagrams
+│   ├── chapters/    # Chapters
+│   └── resources/   # Figures and diagrams
 │
 └── topo-learning/   # Jupyter notebook for experiments
     ├── topo_learning.ipynb
