@@ -1,0 +1,14 @@
+{
+  "editor.formatOnSave": true,
+  "prettier.enable": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jupyter-notebook]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

@@ -24,7 +24,12 @@ brew install --cask mactex
 ## Compile the thesis
 This will automatically compile the thesis and generate main.pdf.
 ```bash
-latexmk -pdf main.tex
+latexmk \
+    -pdf \
+    -file-line-error \
+    -interaction=nonstopmode \
+    -outdir=build \
+    main.tex
 ```
 
 ## Clean Up Auxiliary Files
@@ -32,3 +37,6 @@ To clean up temporary files:
 ```bash
 latexmk -c
 ```
+
+## VS Code
+> Install LaTeX Workshop extension
