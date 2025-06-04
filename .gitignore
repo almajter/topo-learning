@@ -1,9 +1,6 @@
 # Jupyter Notebook checkpoints
 topo-learning/.ipynb_checkpoints/
 
-# Jupyter notebook outputs
-topo-learning/output/*
-
 # LaTeX build artifacts
 *.aux
 *.bbl
@@ -17,5 +14,3 @@ topo-learning/output/*
 *.toc
 
 thesis/main.pdf
-
-.vscode/

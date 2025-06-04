@@ -15,13 +15,15 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-      - name: Compile LaTeX to PDF
+      - name: Set up TeX Live
         uses: xu-cheng/latex-action@v3
-        with:
-          root_file: thesis/main.tex
-          work_in_root_file_dir: true
-      - name: Upload PDF
-        uses: actions/upload-artifact@v4
-        with:
-          name: thesis
-          path: thesis/main.pdf
+      - name: Compile LaTeX document
+        working-directory: thesis
+        run: |
+          mkdir -p build
+          latexmk \
+            -pdf \
+            -file-line-error \
+            -interaction=nonstopmode \
+            -outdir=build \
+            main.tex
