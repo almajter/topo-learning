@@ -1,4 +1,6 @@
 {
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
   "[latex]": {
     "editor.wordWrap": "on",
     "editor.wordWrapColumn": 80,

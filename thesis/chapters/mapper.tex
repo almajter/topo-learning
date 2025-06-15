@@ -1,24 +1,24 @@
 \chapter{Mapper algoritem}
-Algoritem Mapper je orodje za ekstrakcijo globalnih značilnosti iz visokodimenzionalnih podatkov, ki preoblikuje zapletene podatkovne množice v preproste simplicialne komplekse. Ti simplicialni kompleksi omogočajo kompakten globalni prikaz podatkov, neodvisno od individualnih razdalj, kotov ali točk. 
+Algoritem Mapper je orodje za ekstrakcijo globalnih značilnosti iz visokodimenzionalnih podatkov, ki preoblikuje zapletene podatkovne množice v preproste simplicialne komplekse. Ti simplicialni kompleksi omogočajo kompakten globalni prikaz podatkov, neodvisno od individualnih razdalj, kotov ali točk.
 Algoritem ustvarja graf, ki odraža topološko strukturo izvornega oblaka točk. Začne z izbiro zvezne funkcije, ki se imenuje filter, $f : X \rightarrow Z$, ki na primer projicira prostor $X$ na podprostor $Z$. Nato določi končno odprto pokritje $\mathcal{U} = \{U_i\}_{i \in I}$ prostora $Z$. S pomočjo algoritma za združevanje v gruče se neodvisno obdela vsaka praslika $f^{-1}(U_i)$, od koder dobimo odprto pokritje $\mathcal{V} = \{V_j\}_{j \in J}$ oblaka točk. Končni Mapperjev graf ali simplicialni kompleks je opredeljen z živcem $\mathcal{V}$, nizom podmnožic $\mathcal{K}$ iz množice $J$ z nepraznimi presečišči. Vsaka podmnožica z $n+1$ indeksi predstavlja $n$-simpleks, kjer enočlenske podmnožice tvorijo vozlišča grafa, dvodelne pa njegove robove.
 \begin{comment}
-    https://danedmiston.github.io/home_page/assets/Mapper.pdf
+https://danedmiston.github.io/home_page/assets/Mapper.pdf
 \end{comment}
 
 \cite{Langenbahn2022}
 \section{Algoritem}
 V nadaljevanju so opisani koraki algoritma Mapper:
 \begin{algorithm}
-\caption{Mapper algoritem}\label{alg:cap}
-\begin{algorithmic}
-\State \textbf{Vhod:} Zbirka (množica) podatkov $X$ z metriko, funkcija $f: X \rightarrow \mathbb{R}$ (ali $\mathbb{R}^d$), in pokritje $\mathcal{U}$ prostora $f(X)$.
-\State \textbf{Algoritem:}
-\For{each $U \in \mathcal{U}$}
+  \caption{Mapper algoritem}\label{alg:cap}
+  \begin{algorithmic}
+    \State \textbf{Vhod:} Zbirka (množica) podatkov $X$ z metriko, funkcija $f: X \rightarrow \mathbb{R}$ (ali $\mathbb{R}^d$), in pokritje $\mathcal{U}$ prostora $f(X)$.
+    \State \textbf{Algoritem:}
+    \For{each $U \in \mathcal{U}$}
     \State Razdeli $f^{-1}(U)$  v skupine $C_{U,1}, \ldots, C_{U,k_U}$.
     \State Izračunaj živec pokritja $X$, ki ga definira $\{C_{U,1}, \ldots, C_{U,k_U}\}$ for each $U \in \mathcal{U}$.
-\EndFor
-\State \textbf{Izhod:} Simplicialni kompleks, živec (pogosto graf za dobro izbrana pokritja):
-\State \quad - Vozlišče $v_{U,i}$ za vsako skupino $C_{U,i}$.
-\State \quad - Povezava $v_{U,i}$ in $v_{U',j}$ če $C_{U,i} \cap C_{U',j} \neq \emptyset$.
-\end{algorithmic}
+    \EndFor
+    \State \textbf{Izhod:} Simplicialni kompleks, živec (pogosto graf za dobro izbrana pokritja):
+    \State \quad - Vozlišče $v_{U,i}$ za vsako skupino $C_{U,i}$.
+    \State \quad - Povezava $v_{U,i}$ in $v_{U',j}$ če $C_{U,i} \cap C_{U',j} \neq \emptyset$.
+  \end{algorithmic}
 \end{algorithm}

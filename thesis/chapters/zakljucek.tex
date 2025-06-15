@@ -8,9 +8,9 @@ Rezultati, ki jih bomo predstavili so povzeti iz članka~\cite{Gabella_2021}. Po
 Nevronska mreža ima dva skrita nivoja s 100 nevroni in sigmoidno aktivacijsko funkcijo. Začetne vrednosti uteži so bile nastavljene na naključne majhne vrednosti. Za filter funkcijo je bila uporabljena $L^2$ norma in DBSCAN kot algoritem gručenja.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{resources/mapper-minst.png}
-    \caption{Evolucija uteži učenja nevronske mreže. Vir:~\cite{Gabella_2021}}\label{fig:evolution}
+  \centering
+  \includegraphics[width=1\linewidth]{resources/mapper-minst.png}
+  \caption{Evolucija uteži učenja nevronske mreže. Vir:~\cite{Gabella_2021}}\label{fig:evolution}
 \end{figure}
 
 Z modro barvo so predstavljene uteži na začetku učenja in z rumeno na koncu. Opazimo, da se graf v zadnjem sloju razveji na 10 vej, kjer vsaka predstavlja eno izmed desetih števk. V skritem nivoju pa lahko opazimo, da se uteži nekaj časa razvijajo v enaki smeri in se šele nato razvejijo, kar bi lahko bila posledica PCA projekcije. Omenimo še, da so smeri razvejanja v različnih poskusih učenja ostale skoraj konstantne. V zadnjem sloju opazimo, da se graf že na začetku usmeri na dve nasprotni veji, ki se nato še dalje razvejita. Vidno je tudi, da so si nekatere števke zelo podobne, recimo osmica in trojka sta si zelo sorodni.
