@@ -1,5 +1,7 @@
 {
-    "[latex]": {
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "[latex]": {
     "editor.wordWrap": "on",
     "editor.wordWrapColumn": 80,
     "editor.wrappingIndent": "indent"
@@ -11,24 +13,7 @@
   },
   "latex-workshop.latex.tools": [
     {
-      "name": "pdflatex",
-      "command": "pdflatex",
-      "args": [
-        "-synctex=1",
-        "-interaction=nonstopmode",
-        "-file-line-error",
-        "%DOC%"
-      ]
-    },
-    {
-      "name": "bibtex",
-      "command": "bibtex",
-      "args": [
-        "%DOCFILE%"
-      ]
-    },
-    {
-      "name": "latexmk",
+      "name": "latexmk-main",
       "command": "latexmk",
       "args": [
         "-synctex=1",
@@ -36,24 +21,15 @@
         "-file-line-error",
         "-pdf",
         "-outdir=build",
-        "%DOC%"
+        "main.tex"
       ]
     }
   ],
   "latex-workshop.latex.recipes": [
     {
-      "name": "latexmk",
+      "name": "latexmk (build main.tex)",
       "tools": [
-        "latexmk"
-      ]
-    },
-    {
-      "name": "pdflatex -> bibtex -> pdflatex*2",
-      "tools": [
-        "pdflatex",
-        "bibtex",
-        "pdflatex",
-        "pdflatex"
+        "latexmk-main"
       ]
     }
   ],

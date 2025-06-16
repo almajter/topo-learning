@@ -38,5 +38,10 @@ To clean up temporary files:
 latexmk -c
 ```
 
+## Formatter
+```bash
+latexindent -l -w yourfile.tex
+```
+
 ## VS Code
-> Install LaTeX Workshop extension
+- Install LaTeX Workshop extension

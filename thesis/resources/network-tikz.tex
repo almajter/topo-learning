@@ -1,0 +1,62 @@
+\begin{tikzpicture}[
+  neuron/.style={circle, draw, minimum size=6mm},
+  layer/.style={font=\small, align=center}
+]
+  %────────────────────────────────────────────────────────────────
+  % 1) Define layer sizes and spacing
+  %────────────────────────────────────────────────────────────────
+  \def\nI{3}       % number of neurons in the input layer
+  \def\nH{4}       % number of neurons in the hidden layer
+  \def\nO{2}       % number of neurons in the output layer
+
+  \def\xsep{3cm}   % horizontal separation between layers
+  \def\ysep{1.2cm} % vertical separation between neurons
+
+  %────────────────────────────────────────────────────────────────
+  % 2) Draw Input Layer
+  %────────────────────────────────────────────────────────────────
+  \foreach \i in {1,...,\nI} {
+    \node[neuron] (I\i) at (0, {-(\i-1)*\ysep}) {};
+  }
+  \node[layer, above=0.5cm of I1] {Input Layer};
+
+  %────────────────────────────────────────────────────────────────
+  % 3) Draw Hidden Layer
+  %────────────────────────────────────────────────────────────────
+  \foreach \j in {1,...,\nH} {
+    \node[neuron] (H\j) 
+      at (
+        \xsep, 
+        {-(\j-1)*\ysep + ((\nH-\nI)*\ysep)/2}
+      ) 
+      {};
+  }
+  \node[layer, above=0.5cm of H1] {Hidden Layer};
+
+  %────────────────────────────────────────────────────────────────
+  % 4) Draw Output Layer
+  %────────────────────────────────────────────────────────────────
+  \foreach \k in {1,...,\nO} {
+    \node[neuron] (O\k) 
+      at (
+        2*\xsep, 
+        {-(\k-1)*\ysep + ((\nO-\nH)*\ysep)/2}
+      ) 
+      {};
+  }
+  \node[layer, above=0.5cm of O1] {Output Layer};
+
+  %────────────────────────────────────────────────────────────────
+  % 5) Connect neurons between layers
+  %────────────────────────────────────────────────────────────────
+  \foreach \i in {1,...,\nI} {
+    \foreach \j in {1,...,\nH} {
+      \draw[-latex] (I\i) -- (H\j);
+    }
+  }
+  \foreach \j in {1,...,\nH} {
+    \foreach \k in {1,...,\nO} {
+      \draw[-latex] (H\j) -- (O\k);
+    }
+  }
+\end{tikzpicture}
