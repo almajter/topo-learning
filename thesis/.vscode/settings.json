@@ -35,11 +35,9 @@
   ],
   "latex-workshop.view.pdf.viewer": "tab",
   "latex-workshop.latex.autoBuild.run": "onFileChange",
-  "latex-workshop.latex.clean.enabled": true,
   "latex-workshop.latex.outDir": "build",
   "latex-workshop.view.pdf.external.viewer.command": "xdg-open",
   "latex-workshop.view.pdf.external.viewer.args": [
     "%PDF%"
-  ],
-  "latex-workshop.view.pdf.external.viewer.enabled": true
+  ]
 }

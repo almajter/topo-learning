@@ -1,0 +1,36 @@
+\begin{tikzpicture}[scale=1.2, every node/.style={font=\small}]
+  % 0-simplex (point)
+  \fill[myblue!60!black] (0,0) circle (2pt);
+  \node[below=4pt] at (0,-0.2) {0 - simpleks};
+
+  % 1-simplex (line segment)
+  \fill[myblue!60!black] (2,0) circle (2pt);
+  \fill[myblue!60!black] (3,0) circle (2pt);
+  \draw[thick] (2,0) -- (3,0);
+  \node[below=4pt] at (2.5,-0.2) {1 - simpleks};
+
+  % 2-simplex (triangle)
+  \coordinate (A) at (5.5,0);
+  \coordinate (B) at (6.5,0);
+  \coordinate (C) at (6,1.2);
+  \fill[gray!20] (A) -- (B) -- (C) -- cycle;
+  \draw[thick] (A) -- (B) -- (C) -- cycle;
+  \foreach \p in {A,B,C}
+    \fill[myblue!20] (\p) circle (2pt);
+  \node[below=4pt] at (6,-0.2) {2 - simpleks};
+
+  % 3-simplex (tetrahedron)
+  \coordinate (D) at (9,0);
+  \coordinate (E) at (10,0);
+  \coordinate (F) at (9.5,1.2);
+  \coordinate (G) at (9.5,0.5);
+  \fill[gray!20, opacity=0.5] (D) -- (E) -- (F) -- cycle;
+  \draw[thick] (D) -- (E) -- (F) -- cycle;
+  \draw[thick] (D) -- (G) -- (E);
+  \draw[thick] (F) -- (G);
+  \draw[thick] (D) -- (F);
+  \draw[thick] (E) -- (F);
+  \foreach \p in {D,E,F,G}
+    \fill[myblue!20] (\p) circle (2pt);
+  \node[below=4pt] at (9.5,-0.2) {3 - simpleks};
+\end{tikzpicture}
