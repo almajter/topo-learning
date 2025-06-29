@@ -1,97 +1,23 @@
-\chapter{Metoda glavnih komponent}
-Vektorji vhodnih uteži na sloju $N^{(i)}$ so velikosti $N^{(i - 1)}$. Te številke so običajno veliko večje od 2 ali 3, zato si teh vektorjev ne moremo predstavljati, kot točk v 2 oz. 3 dimenzionalnem prostoru. V tem poglavju si bomo pogledali linearno metodo za zmanjševanje dimenzij, ki se imenuje metoda glavnih komponent. Pri tem bomo sledili~\cite{shlens2014tutorial}.
-
-\section{Sprememba baze}
-Cilj metode glavnih komponent je zbirko podatkov predstaviti z bazo, katere bazni vektorji bodo po vrsti razkrili največ informacije o originalnih podatkih. Glavna ideja je, da bodo najpomembnejši bazni vektorji zadostovali za predstavo strukture podatkov, medtem ko bodo manj pomembnejši le filtrirali morebitne šume. Originalne podatke, ki smo jih predstavili z matriko $X$, bomo torej transformirali v matriko $Y$, ki bo predstavljala podatke zapisane v novi bazi. Vsak nov bazni vektor lahko zapišemo kot linearno kombinacijo originalnih baznih vektorjev, zato lahko poiščemo matriko linearne preslikave $P$, tako da bo veljalo:
-\begin{equation}
-  Y^T = PX^T
-\end{equation}
-
-\section{Napaka rekonstrukcije in varianca}
-Vrednost podatkov v novi bazi dobimo s pravokotno projekcijo na nove normirane bazne vektorje. Iskanja nove komponente se lahko lotimo, tako da poiščemo enotski vektor $u_1$, ki bo po projekciji podatkov minimiziral napako rekonstrukcije originalnega prostora.
-\begin{equation}
-  E(u_1) = \sum_{i} \left\lVert x^{(i)} - (u_{1}^{T}{x}^{(i)})u_{1} \right\rVert^2
-\end{equation}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\linewidth]{resources/napakaRekonstrukcije.png}
-  \caption{Napaka rekonstrukcije. Vir:~\cite{dataset}}\label{fig:error}
-\end{figure}
-\begin{comment}
-https://www.google.com/url?sa=i&url=https%3A%2F%2Fstats.stackexchange.com%2Fquestions%2F194278%2Fmeaning-of-reconstruction-error-in-pca-and-lda&psig=AOvVaw2fogYikUFLgwt2PUiiO5BI&ust=1714336714385000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCNDVwoig44UDFQAAAAAdAAAAABAE
-\end{comment}
-
-To pa je ravno ekvivalenten problem iskanja vektorja, ki bo po projekciji originalnih podatkov jih ohranjal najbolj razpršene. Razpršenost merimo z varianco, ki je povprečna oddaljenost projekcije podatkov od projekcije središčne točke podatkov $\bar{x} = \frac{1}{m} \sum_{i} x^{(i)}$:
-\begin{equation}
-  \mathrm{Var}(u_1^{\top}X^{\top}) = \frac{1}{m} \sum_{i=1}^{m} \left(u_1^{\top}x^{(i)} - u_1^{\top}\bar{x}\right){}^2
-\end{equation}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=1\linewidth]{resources/pcaDvaPogleda.png}
-  \caption{Varianca in napaka rekonstrukcije. Vir:~\cite{quora_pca_explanation}}\label{fig:varerr}
-\end{figure}
-\begin{comment}
-https://alexhwilliams.info/itsneuronalblog/img/pca/pca_two_views.png
-\end{comment}
-Dokažimo zgornjo trditev.
-\begin{trditev}
-  $u_{1} = \underset{u:\|\mathbf{u}\|_2=1}{\operatorname{argmin}}\ E(u) = \underset{u:\|\mathbf{u}\|_2=1}{\operatorname{argmax}}\ \operatorname{Var}(u^{\top}X^{\top})$
-\end{trditev}
-\begin{dokaz}
-  \begin{equation}
-    \mathbf{u_{1}} = \underset{\mathbf{u}:\|\mathbf{u}\|_2=1}{\mathrm{argmin}} \frac{1}{m} \sum_{i=1}^{m} \left\| \mathbf{u}^{(i)} - (\mathbf{u}^T \mathbf{x}^{(i)})\mathbf{u} \right\|^2
-  \end{equation}
-  \begin{equation}
-    = \underset{\mathbf{u}:\|\mathbf{u}\|_2=1}{\mathrm{argmin}} \frac{1}{m} \sum_{i=1}^{m} \left\| \mathbf{x}^{(i)} \right\|^2 - (\mathbf{u}^T \mathbf{x}^{(i)}){}^2
-  \end{equation}
-  \begin{equation}
-    = \underset{\mathbf{u}:\|\mathbf{u}\|_2=1}{\mathrm{argmax}} \frac{1}{m} \sum_{i=1}^{m} (\mathbf{u}^T \mathbf{x}^{(i)}){}^2
-  \end{equation}
-\end{dokaz}~\cite{gormley2018pca} \\
-\begin{comment}
-http://www.cs.cmu.edu/~mgormley/courses/606-607-f18/slides606/lecture11-pca.pdf
-\end{comment}
-Če enačbo za varianco malenkost preoblikujemo, dobimo naslednje.~\cite{zupan2024uozp}
-\begin{equation}
-  \begin{aligned}
-    \mathrm{Var}(u_1^T X)
-     & = \frac{1}{m} \sum_{i=1}^{m} \left( (u_1^T x^{(i)} - u_1^T \bar{x}){}^2 \right)                                                       \\
-     & = \frac{1}{m} \sum_{i=1}^{m} \left( (u_1^T x^{(i)}){}^2 - 2 u_1^T x^{(i)} \cdot u_1^T \bar{x} + (u_1^T \bar{x}){}^2 \right)           \\
-     & = \frac{1}{m} \sum_{i=1}^{m} u_1^T \left( x^{(i)} (x^{(i)}){}^T - 2 x^{(i)} \bar{x}^T + \bar{x} \bar{x}^T \right) u_1                 \\
-     & = u_1^T \underbrace{\left( \frac{1}{m} \sum_{i=1}^{m} (x^{(i)} - \mu)(x^{(i)} - \mu){}^T \right)}_{\text{Kovariančna matrika } C} u_1
-  \end{aligned}
-\end{equation}
-Zgornjo maksimizacijo variance lahko pod pogojem, da je $u_1$ enotski vektor, rešimo s pomočjo Langrangeovih multiplikatorjev.
-\begin{equation}
-  f(u_1) = u_1^T C u_1 + \lambda_1 (1 - u_1^T u_1)
-\end{equation}
-\begin{equation}
-  \frac{\partial f(u_1)}{\partial u_1} = C u_1 - \lambda_1 u_1 = 0
-\end{equation}
-
-Po preoblikovanju enačbe, sledi da so to rešitve ravno lastni vektorji kovariančne matrike.
-\begin{equation}
-  C u_1 = \lambda_1 u_1
-\end{equation}
-Če zgornjo še malo preoblikujemo, ugotovimo, da lastni vektor z največjo lastno vrednostjo ohranja največ informacije o originalnem prostoru.
-\begin{equation}
-  u_1^T C u_1 = u_1^T \lambda_1 u_1 = \lambda_1 u_1^T u_1 = \lambda_1
-\end{equation}
-Podobno lahko za ostale nove bazne vektorje izberemo ostale lastne vektorje kovariančne matrike z najvišjimi lastnimi vrednosti.
-
-Opazimo lahko tudi, da je kovariančna matrika simetrična $\Sigma = \Sigma^T$, zato bodo lastni vektorji ortogonalni, torej preslikava, ki smo jo dobili je samo rotacija originalnega prostora.
-
-\section{Rešitev z uporabo SVD}
-Lastne vektorje kovariančne matrike C lahko izračunamo s pomočjo singularnega razcepa.~\cite{zupan2024uozp}
-\begin{equation}
-  C = U \Sigma V^T
-\end{equation}
-Nato prvih k lastnih vektorjev vstavimo v matriko
-\begin{equation}
-  P = [u_1, u_2, \dots, u_k]
-\end{equation}
-Z matriko $P$, lahko sedaj preslikamo originalne podatke v nižje k-dimenzionalni prostor.
-\begin{equation}
-  y_i = P^T (x_i - \mu)
-\end{equation}
+\chapter{Zmanjševanje dimenzionalnosti} \section{Potreba po znižanju dimenzionalnosti}
+V dobi kompleksnih in visoko-dimenzionalnih podatkov je eden glavnih izzivov njihovo učinkovito razumevanje in vizualizacija. Podatkovni vektorji, kot so npr. uteži velike nevronske mreže, lahko obstajajo v prostoru z na tisoče ali celo milijone dimenzij. Za človeka (in pogosto tudi za računalniške algoritme) je tako visoke dimenzionalnosti težko neposredno obravnavati, saj si jih ne moremo predstavljati, prav tako pa se v njih pojavljajo pojavi, kot je t. i. prekletstvo dimenzionalnosti, kjer z večanjem dimenzije značilnosti podatkov postajajo razpršene in primerjave med podatki manj zanesljive. Rešitev za te težave ponujajo metode za zmanjševanje dimenzionalnosti, ki podatke preslikajo iz izvirnega visokodimenzionalnega prostora v prostor z manj razsežnostmi (npr. v dve ali tri dimenzije), pri čemer poskušajo ohraniti kar največ pomembnih informacij o podatkih. S tem postopkom lahko:
+\begin{itemize}
+\item lažje vizualiziramo podatke (npr. projiciramo podatke v 2D za prikaz na ravnini),
+\item odstranimo šum in redundanco v podatkih ter s tem izboljšamo kakovost podatkovne predstavitve,
+\item hitreje in učinkoviteje izvajamo nadaljnjo analizo ali algoritme (manj dimenzij pomeni manj računskih zahtev).
+\end{itemize}
+V nadaljevanju bomo predstavili tri priljubljene metode za zmanjšanje dimenzionalnosti: analizo glavnih komponent (PCA), t-SNE in UMAP. Te metode bomo uporabili tudi v naših eksperimentih kot \textit{filtrirne funkcije} v Mapper algoritmu, saj omogočajo projekcijo kompleksnih podatkov (stanj nevronske mreže med učenjem) v nižjo razsežnost, ki je primernejša za topološko analizo. \section{Analiza glavnih komponent (PCA)}
+Analiza glavnih komponent (angl. \textit{Principal Component Analysis} – PCA) je klasična linearna metoda za zmanjševanje dimenzionalnosti. Osnovna ideja PCA je najti nove ortogonalne osi (smere) v podatkih, ki maksimalno pojasnijo varianco (razpršenost) podatkov. Prva glavna komponenta je smer v prostoru vhodnih podatkov, vzdolž katere imajo podatki največjo varianco. Druga glavna komponenta je smer, ki je pravokotna (ortogonalna) na prvo in pojasni čim več preostale variance, in tako naprej. Projekcijo podatkov na nekaj prvih glavnih komponent lahko nato uporabimo kot znižano-dimenzionalno predstavitev z minimalno izgubo informacij. Intuitivno si lahko postopek PCA predstavljamo tako: če imamo oblak podatkovnih točk v več-dimenzionalnem prostoru, PCA poišče smer, v katero je ta oblak najbolj razpotegnjen – to postane prva glavna komponenta. Nato poišče drugo, med seboj pravokotno smer največje razpršenosti, in tako določi drugo glavno komponento. Ko podatke projiciramo na ravnino, določeno z prvima dvema (ali prvimi nekaj) glavnima komponentama, dobimo dvodimenzionalni prikaz, ki ohranja večino raznolikosti izvirnih podatkov. PCA je uporabna za odstranjevanje redundantnih informacij in šuma v podatkih, saj pogosto le nekaj prvih komponent zajame večino variabilnosti v podatkovni množici. Metoda je tudi izračunsko razmeroma učinkovita in rezultati so deterministični (vedno enaki za iste podatke). Vendar pa je PCA omejena na linearne vzorce: če pomembne strukture v podatkih niso linearne, jih PCA ne more dobro zajeti. V takih primerih posežemo po nelinearnih metodah za zmanjšanje dimenzionalnosti, kot sta t-SNE in UMAP. \section{t-SNE (t-porazdeljeno stohastično vgrajevanje sosedov)}
+t-SNE (angl. \textit{t-Distributed Stochastic Neighbor Embedding}) je nelinearna metoda za zmanjševanje dimenzionalnosti, ki je posebej priljubljena za vizualizacijo visoko-dimenzionalnih podatkov. Za razliko od PCA, ki ohranja predvsem globalno strukturo in največjo varianco, t-SNE poudari ohranjanje lokalnih razmerij med podatki. To pomeni, da t-SNE v nizki dimenziji (tipično 2D) poskuša ohraniti točke, ki so bile v originalnem prostoru med seboj blizu, še vedno tesno skupaj, medtem ko točke, ki so bile v originalu zelo daleč vsaksebi, v novi predstavitvi niso nujno na sorazmerno večji medsebojni razdalji. Algoritem t-SNE deluje tako, da najprej zgradi verjetnostno porazdelitev sosednosti med točkami v visokodimenzionalnem prostoru, nato pa skuša skonstruirati podobno porazdelitev razdalj v nizkodimenzionalnem prostoru. S postopnim optimiziranjem (gradientnim spustom) t-SNE prilagaja položaje točk v 2D/3D tako, da se porazdelitvi sosednosti v obeh prostorih čim bolje ujemata
+linkedin.com
+linkedin.com
+. Rezultat tega procesa je nizkodimenzionalna projekcija, v kateri so si med seboj podobni podatki blizu (združeni v skupine ali gruče), kar olajša odkrivanje vzorcev in podstruktur v podatkih. t-SNE se pogosto uporablja za raziskovanje in vizualizacijo kompleksnih množic podatkov. Njegova prednost je zmožnost razkrivanja skritih skupin (grozdov) v podatkih, ki v izvirnem prostoru morda niso očitne. V našem kontekstu ga lahko uporabimo za prikaz podobnosti med različnimi stanji nevronske mreže med učenjem. Ima pa t-SNE tudi nekaj omejitev: algoritem je računsko zahteven za zelo velike množice podatkov (časovna zahtevnost hitro narašča s številom točk) in rezultati se lahko nekoliko razlikujejo ob vsaki ponovitvi (ker vključuje naključnost pri inicializaciji). Poleg tega t-SNE popači globalno strukturo podatkov – razdalje med gručami v končni projekciji ne odražajo nujno dejanskih razdalj v izvirnem prostoru. Zato iz vizualizacije t-SNE ne moremo neposredno sklepati o relativnih globalnih razdaljah med skupinami podatkov, temveč predvsem o lokalni povezanosti znotraj skupin. \section{UMAP (Uniform Manifold Approximation and Projection)}
+UMAP (angl. \textit{Uniform Manifold Approximation and Projection}) je sodobna nelinearna metoda za zmanjševanje dimenzionalnosti, ki je bila razvita leta 2018
+joss.theoj.org
+. Po namenu je podobna t-SNE – najpogosteje se uporablja za vizualizacijo visokodimenzionalnih podatkov in iskanje vzorcev v njih. Jedro algoritma UMAP temelji na predpostavki, da podatki ležijo na večdimenzionalni mnogoterosti (manifold) nižjega reda, ki je vdelana v visokodimenzionalni prostor. UMAP skuša izslediti obliko te mnogoterosti in jo nato čim bolje “sploščiti” v manj dimenzij, pri čemer ohranja strukturo podatkov (predvsem lokalne povezave med podatki). Tehnično gledano UMAP najprej za vsako točko določi njene najbližje sosede (število sosedov je hiperparameter metode) in na podlagi razdalj do teh sosedov zgradi graf povezanosti. To določa lokalno strukturo podatkov. Nato z optimizacijskim postopkom poišče razporeditev točk v nižji dimenziji, ki kar najbolje ohranja odnose med sosednjimi točkami
+linkedin.com
+. Rezultat je nizkodimenzionalna predstavitev, v kateri so lokalno bližnji podatki ostali skupaj, podobno kot pri t-SNE. UMAP pa se od t-SNE razlikuje v tem, da praviloma bolje ohranja tudi globalno strukturo podatkov: gruče (skupine) podatkov v UMAP-projekciji so med seboj razporejene tako, da razdalje med njimi bolj odražajo dejanske razlike v izvirnih podatkih
+linkedin.com
+. Poleg tega je UMAP običajno hitrejši in bolj skalen od t-SNE, saj je zasnovan kot učinkovitejši algoritam z ozirom na velike podatkovne množice
+arxiv.org
+. Uporabnik lahko z izbiro hiperparametrov pri UMAP uravnava značaj projekcije. Parameter \textit{število sosedov} določa, kako “lokalno” ali “globalno” bo UMAP gledal na podatke (majhno število sosedov poudari drobne lokalne strukture, veliko število pa zajame širše vzorce). Parameter \textit{minimalna razdalja} pa vpliva na to, kako skupaj smejo biti točke v končni projekciji (višja minimalna razdalja pomeni, da bodo gruče podatkov v 2D bolj razpršene). Z izbiro teh parametrov lahko prilagodimo, ali bo vizualizacija bolj razkrila fine lokalne grozde ali pa bolj zgladila sliko v prid globalni strukturi. Ker UMAP relativno dobro ohranja različne vidike podatkovne strukture in je nezahteven za nadaljnjo uporabo, se pogosto uporablja ne le za vizualizacijo, temveč tudi kot splošna metoda za pripravo podatkov (izvleček značilk) pred nadaljnjo obdelavo v strojnem učenju. \section{Uporaba kot filtrirne funkcije v algoritmu Mapper}
+Algoritem Mapper, ki ga bomo uporabili za topološko analizo učenja nevronskih mrež, zahteva izbiro ustrezne \textit{filtrirne funkcije} (angl. filter function). Ta funkcija vsakemu podatkovnemu primeru – v našem primeru trenutnemu stanju uteži nevronske mreže – priredi eno ali več številskih vrednosti. Na podlagi teh vrednosti algoritem Mapper podatke razdeli (v razponih ali intervalih) in znotraj teh podmnožic izvaja gručenje. Izbira dobre filtrirne funkcije je ključna, saj močno vpliva na končno topološko strukturo (graf) v Mapper analizi. V naših poskusih smo kot filtrirne preslikave uporabili opisane metode za zmanjševanje dimenzionalnosti. Visokodimenzionalne vektorje uteži, zajete v različnih fazah učenja nevronske mreže, smo preslikali v nižjo dimenzijo s pomočjo PCA, t-SNE in UMAP. Na primer, z metodo PCA smo vsako stanje uteži predstavili z nekaj glavnimi komponentami (pogosto že kar s prvo glavno komponento kot enodimenzionalnim filtrom). Podobno smo z metodama t-SNE in UMAP za vsako stanje uteži izračunali koordinati v dvodimenzionalnem prostoru. Ti 2D projekciji smo nato uporabili tako, da smo posamezne koordinatne osi uporabili kot ločeni filtrirni funkciji (lahko bi uporabili tudi samo eno izmed koordinat). Vsaka od teh metod ponuja nekoliko drugačen “pogled” na podatke: PCA izpostavi smer največje globalne variance v podatkih, t-SNE razkrije lokalne gruče podobnih stanj, UMAP pa skuša uravnotežiti lokalno povezanost s širšo strukturo podatkov. V naslednjih poglavjih bomo videli, kako izbira različne filtrirne funkcije vpliva na obliko in značilnosti Mapper grafov ter kaj nam ti grafi povedo o poteku učenja v nevronski mreži.

@@ -116,73 +116,48 @@ Aktivacijske funkcije so nelinearne funkcije, ki preslikajo uteženo vsoto nevro
 
 Aktivacijske funkcije določajo, kako se izhod posameznega nevrona iz pretekle plasti pretvori v vhod za naslednjo plast. Brez nelinearnih aktivacij bi bile nevronske mreže le linearni modeli, nezmožni učinkovitega učenja kompleksnih vzorcev.
 
+\section*{Aktivacijske funkcije}
+
+Aktivacijske funkcije vnašajo nelinearnost v delovanje umetnih nevronov, kar je ključno za učenje kompleksnih vzorcev. Brez njih bi bile nevronske mreže zgolj linearni modeli, neuporabni za večino praktičnih nalog. Aktivacijska funkcija vsakemu nevronu določa, kako močno se bo odzval na vhod.
+
 \subsection*{Pogoste aktivacijske funkcije}
 
 \begin{itemize}
-  \item Sigmoidna funkcija:
+
+  \item \textbf{Sigmoid:}
   \[
   \sigma(x) = \frac{1}{1 + e^{-x}}
   \]
-  Pretvori vhod v vrednosti med 0 in 1. Pogosto se uporablja v izhodni plasti za binarno klasifikacijo.
-  \begin{figure}[H]
-\centering
-\begin{tikzpicture}
-\begin{axis}[domain=-10:10, samples=200, axis lines=middle, xlabel=$x$, ylabel={$y$}, title={Sigmoid}]
-\addplot[blue, thick] {1/(1 + exp(-x))};
-\end{axis}
-\end{tikzpicture}
-\end{figure}
+  Zgladi vhod v interval $[0, 1]$, pogosto uporabljen v izhodnem sloju pri binarni klasifikaciji. Lahko povzroča izginjanje gradientov, saj se pri ekstremnih vhodih nasiči.
 
-  \item Tanh funkcija:
+  \item \textbf{Tanh:}
   \[
   \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
   \]
-  Vrednosti gredo od -1 do 1. Ima boljšo povprečno izhodno vrednost kot sigmoid.
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}
-\begin{axis}[domain=-10:10, samples=200, axis lines=middle, xlabel=$x$, ylabel={$y$}, title={Tanh}]
-\addplot[red, thick] {tanh(x)};
-\end{axis}
-\end{tikzpicture}
-\end{figure}
+  Ima vrednosti med $[-1, 1]$, kar omogoča simetrično učenje. V primerjavi s sigmoidom ima ničelno sredino, vendar podobno težavo s saturacijo.
 
-  \item ReLU (Rectified Linear Unit):
+  \item \textbf{ReLU (Rectified Linear Unit):}
   \[
   \text{ReLU}(x) = \max(0, x)
   \]
-  Najpogosteje uporabljena zaradi učinkovitosti in reševanja problema izginjajočih gradientov.
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}
-\begin{axis}[domain=-10:10, samples=200, axis lines=middle, xlabel=$x$, ylabel={$y$}, title={ReLU}]
-\addplot[green, thick] {max(0,x)};
-\end{axis}
-\end{tikzpicture}
-\end{figure}
+  Najpogosteje uporabljena funkcija v skritih slojih. Hitro in enostavno se izračuna, a lahko povzroči t. i.\ »mrtve nevrone« za negativne vrednosti.
 
-  \item Leaky ReLU:\@
+  \item \textbf{Leaky ReLU:}
   \[
   \text{Leaky ReLU}(x) = \max(\alpha x, x), \quad \alpha > 0
   \]
-  Omogoča majhen negativni gradient tudi, ko je vhod negativen.
-  \begin{figure}[H]
-\centering
-\begin{tikzpicture}
-\begin{axis}[domain=-10:10, samples=200, axis lines=middle, xlabel=$x$, ylabel={$y$}, title={Leaky ReLU}]
-\addplot[orange, thick] {x < 0 ? 0.1*x : x};
-\end{axis}
-\end{tikzpicture}
-\end{figure}
+  Omogoča majhen gradient tudi pri negativnih vhodih in tako zmanjša nevarnost »mrtvih« nevronov.
 
-
-  \item Softmax:
+  \item \textbf{Softmax:}
   \[
   \text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}
   \]
-  Uporablja se v izhodni plasti za večrazredno klasifikacijo, saj pretvori vrednosti v verjetnosti.
+  Pretvori vektor izhodov v porazdelitev verjetnosti. Uporablja se v izhodni plasti za večrazredno klasifikacijo.
+
 \end{itemize}
-Izbor aktivacijske funkcije pomembno vpliva na učno dinamiko. Nelinearnost omogoča, da mreža modelira kompleksne relacije. Derivativ aktivacijske funkcije se neposredno uporablja pri povratnem razširjanju za izračun gradientov.
+
+Izbira aktivacijske funkcije pomembno vpliva na učinkovitost učenja. ReLU in njegove variante so danes najpogostejša izbira za skrite sloje, medtem ko sigmoid ali softmax prevladujeta v izhodnih slojih glede na vrsto naloge. Aktivacijske funkcije ne vplivajo le na zmogljivost mreže, temveč tudi na to, kako učinkovito in stabilno poteka učenje z gradientnim spustom.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
