@@ -161,7 +161,7 @@ Aktivacijske funkcije določajo, kako se izhod posameznega nevrona iz pretekle p
 \end{tikzpicture}
 \end{figure}
 
-  \item Leaky ReLU:
+  \item Leaky ReLU:\@
   \[
   \text{Leaky ReLU}(x) = \max(\alpha x, x), \quad \alpha > 0
   \]
@@ -188,68 +188,114 @@ Izbor aktivacijske funkcije pomembno vpliva na učno dinamiko. Nelinearnost omog
 
 \section{Vzvratno razširjanje napake}
 
-Vzvratno razširjanje (angl.~\textit{backpropagation}) napake je metoda za učenje nevronskih mrež, ki temelji na minimizaciji funkcije napake z gradientnim spustom. Spada med metode nadozorovanega učenja, kjer imamo podano učno množico podatkov s pripadajočimi ciljnimi vrednostmi. Širšo pozornost je pritegnila z delom Rumelharta, Hintona in Williamsa leta 1986~\cite{Rumelhart1986}.
+Vzvratno razširjanje (angl.~\textit{backpropagation}) je najbolj razširjen algoritem za učenje večnivojskih nevronskih mrež. Gre za metodo nadzorovanega učenja, kjer z znanimi vhodno-izhodnimi pari podatkov prilagajamo parametre mreže tako, da se izhod čim bolj približa želenim vrednostim. Algoritem temelji na minimizaciji \textit{funkcije napake} (tudi \textit{kriterijske funkcije}) z metodo gradientnega spusta. Širšo pozornost je postopek pritegnil z delom Rumelharta, Hintona in Williamsa leta 1986~\cite{Rumelhart1986}.
 
-Naj bo podana učna množica s \( p \in \mathbb{N} \) primeri kot matrika \( X \in \mathbb{R}^{p \times N^{(0)}} \), kjer vsak vrstični vektor \( x_i \in \mathbb{R}^{N^{(0)}} \), za \( i = 1, \dots, p \), predstavlja en vhodni primer, in \( y \in \mathbb{R}^{p \times N^{(k)}} \) matrika pripadajočih ciljnih vrednosti.
+Naj bo na voljo učna množica s $p$ primeri, ki jo predstavimo z matriko $X \in \mathbb{R}^{p \times N^{(0)}}$. Vsaka vrstica $x_i \in \mathbb{R}^{N^{(0)}}$ za $i = 1, \dots, p$ predstavlja en vhodni vektor. Prav tako naj bo $Y \in \mathbb{R}^{p \times N^{(k)}}$ matrika pripadajočih ciljnih izhodov, kjer je vsak vrstični vektor $y^{(i)}$ želena (ciljna) vrednost za vhod $x_i$. Uteži in pristranskosti (bias) v mreži na začetku inicializiramo naključno, nato pa jih skozi učenje postopoma prilagajamo.
 
-Uteži mreže na začetku inicializiramo naključno, nato pa jih z učenjem postopoma prilagajamo.
-
-Cilj učenja je najti tak nabor uteži, da bo izhodni vektor nevronske mreže za vsak vhod čim bolj podoben želenemu izhodu. To dosežemo z minimizacijo kriterijske funkcije oz.\ funkcije napake \( E \), ki jo podamo kot:
+Cilj učenja je najti tak nabor uteži $W$, da bo izhodni vektor mreže za vsak vhod $x_i$ čim bolj približal želeni izhod $y^{(i)}$. To dosežemo z minimizacijo skupne napake na učni množici, ki jo lahko ocenimo kot vsoto kvadratov odstopanj med dejanskimi in želenimi vrednostmi. Ena od pogostih izbir je \textit{povprečna kvadratična napaka}. V primeru $p$ učnih primerov jo zapišemo kot:
 \[
-E = \frac{1}{2} \sum_c \sum_j (y_{j,c} - d_{j,c})^2,
-\]
+E = \frac{1}{2} \sum_{i=1}^{p} \sum_{j=1}^{N^{(k)}} \big(y_{j}^{(i)} - d_{j}^{(i)}\big)^2,
+\] 
+kjer $d_{j}^{(i)}$ predstavlja $j$-to ciljno komponento (iz matrike $Y$) za $i$-ti primer, $y_{j}^{(i)}$ pa ustrezno komponento izhodnega vektorja, ki ga mreža vrne za vhod $x_i$. Faktor $1/2$ vključimo iz matematičnih razlogov (da se odvod kvadratične funkcije lepo poenostavi).
 
-kjer je \( y_{j,c} \) izhod mreže in \( d_{j,c} \) ustrezna ciljna vrednost.
-
-% THIS IS NEW CHAPTER
-
-Cilj učenja je najti tak nabor uteži, da bo izhodni vektor nevronske mreže za vsak vhod čim bolj podoben želenemu izhodu. Če imamo končno množico vhodno-izhodnih parov, lahko skupno napako ocenimo s primerjavo dejanskih in ciljnih vrednosti. Skupna napaka \( E \) je definirana kot:
-\[
-E = \frac{1}{2} \sum_c \sum_j (y_{j,c} - d_{j,c})^2,
-\]
-kjer je \( c \) indeks primera, \( j \) indeks izhodne enote, \( y_{j,c} \) dejanski izhod in \( d_{j,c} \) želeni izhod.
-
-Za učenje z gradientnim spustom moramo izračunati parcialne odvode napake glede na vse uteži v mreži. To izvedemo v dveh fazah:
+Za učinkovito učenje z gradientnim spustom moramo izračunati parcialne odvode (gradient) funkcije napake $E$ glede na vse parametre (uteži in pristranskosti) v mreži. Pri tem uporabimo verižno pravilo, postopek pa poteka v dveh fazah:
 \begin{enumerate}
-  \item \textbf{Propagacija naprej}: izračun aktivacij v vsaki plasti na osnovi vhodov.
-  \item \textbf{Propagacija nazaj}: uporaba verižnega pravila za izračun gradientov.
+  \item \textbf{Propagacija naprej:} za dan vhodni vektor $x$ najprej izračunamo aktivacije vseh slojev $h^{(1)}, h^{(2)}, \dots, h^{(k)}$ in tako dobimo izhod modela $h^{(k)}$. Ta vrednost se primerja z želenim izhodom.
+  \item \textbf{Propagacija nazaj:} na podlagi razlike med izhodom mreže in ciljno vrednostjo izračunamo napako na izhodu in jo s pomočjo verižnega pravila razširimo nazaj po mreži. S tem dobimo odvode funkcije napake $\frac{\partial E}{\partial W^{(i)}}$ in $\frac{\partial E}{\partial b^{(i)}}$ za vse sloje ($i = 1, \dots, k$). 
 \end{enumerate}
 
-\begin{enumerate}
-  \item \textbf{Propagacija naprej:} za dan vhodni vektor $x$ izračunamo aktivacije vseh slojev $h^{(1)}, h^{(2)}, \dots, h^{(k)}$ in dobimo izhod modela $h^{(k)}$.
-  \item \textbf{Propagacija nazaj:} izhod primerjamo s ciljno vrednostjo $y$ in izračunamo napako. Nato postopno računamo gradient funkcije napake $E$ po slojih navzdol, pri čemer za vsak sloj $i$ izračunamo odvod $\frac{\partial E}{\partial W^{(i)}}$ in $\frac{\partial E}{\partial b^{(i)}}$.
-\end{enumerate}
+V nadaljevanju podajamo ključne izraze za izračun gradienta. Obdelamo en učni primer $(x, d)$ z dejanskim izhodom $y = h^{(k)}(x)$:
 
-Za izhodne enote imamo:
+\begin{itemize}
+  \item \textbf{Izhodni sloj:}
+  \[
+  \frac{\partial E}{\partial y_j} = y_j - d_j,
+  \quad
+  \frac{\partial E}{\partial x_j} = (y_j - d_j)\, f'(x_j),
+  \]
+  kjer je $f'(x_j)$ odvod aktivacijske funkcije, npr.\ za sigmoidno funkcijo:
+  \[
+  f'(x_j) = y_j (1 - y_j).
+  \]
+
+  \item \textbf{Gradient po utežeh in pristranskosti:}
+  \[
+  \frac{\partial E}{\partial w_{ji}} = \frac{\partial E}{\partial x_j} \cdot h^{(k-1)}_i,
+  \quad
+  \frac{\partial E}{\partial b_j} = \frac{\partial E}{\partial x_j}.
+  \]
+
+  \item \textbf{Skriti sloji:}
+  \[
+  \frac{\partial E}{\partial h_j} = \sum_{k} \frac{\partial E}{\partial x_k} \cdot w_{jk},
+  \quad
+  \frac{\partial E}{\partial x_j} = \frac{\partial E}{\partial h_j} \cdot f'(x_j).
+  \]
+\end{itemize}
+
+\textbf{Posodobitev uteži} s pomočjo gradientnega spusta:
 \[
-\frac{\partial E}{\partial y_j} = y_j - d_j,
+w_{ji} := w_{ji} - \epsilon \, \frac{\partial E}{\partial w_{ji}},
 \]
+ali z dodatnim členom momenta:
 \[
-\frac{\partial E}{\partial x_j} = (y_j - d_j) \cdot y_j (1 - y_j).
+\Delta w_{ji}(t) = -\epsilon \, \frac{\partial E}{\partial w_{ji}}(t) + \alpha\, \Delta w_{ji}(t-1),
+\quad
+w_{ji}(t+1) := w_{ji}(t) + \Delta w_{ji}(t),
 \]
+kjer je $\epsilon$ hitrost učenja in $\alpha$ parameter inercije.
 
-Za uteži \( w_{ji} \) med enotama \( i \) in \( j \) dobimo:
-\[
-\frac{\partial E}{\partial w_{ji}} = \frac{\partial E}{\partial x_j} \cdot y_i.
-\]
+Ta algoritem učinkovito omogoča učenje mrež s številnimi sloji, brez potrebe po drugem odvodu. Ključna za uspešno učenje je izbira arhitekture in aktivacijskih funkcij, inicializacija uteži pa mora razbiti simetrijo med nevroni. Skrite plasti s svojo nelinearnostjo mreži omogočajo učenje kompleksnih vzorcev, povratno razširjanje pa omogoča, da se mreža postopno izboljšuje na podlagi napak, ki jih naredi.
 
-Za enoto \( j \) iz predzadnje plasti velja:
-\[
-\frac{\partial E}{\partial y_j} = \sum_k \frac{\partial E}{\partial x_k} \cdot w_{jk}.
-\]
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  neuron/.style={circle, draw, minimum size=1cm},
+  arrow/.style={->, thick},
+  every node/.style={font=\small}
+]
 
-Uteži posodabljamo z osnovnim pravilom gradientnega spusta:
-\[
-\Delta w = -\epsilon \frac{\partial E}{\partial w},
-\]
-ali s faktorjem inercije:
-\[
-\Delta w(t) = -\epsilon \frac{\partial E}{\partial w}(t) + \alpha \Delta w(t-1),
-\]
-kjer je \( \epsilon \) hitrost učenja, \( \alpha \in [0,1] \) pa parameter, ki določa vpliv prejšnjih sprememb uteži.
+% Layer positions
+\foreach \i in {1,...,3}
+  \node[neuron] (I\i) at (0, -\i) {$x_{\i}$};
 
-Uteži na začetku inicializiramo naključno. Metoda povratnega razširjanja omogoča učinkovito učenje brez potrebe po drugem odvodu (Hessianu), kar je še posebej pomembno za izvedbo na realni strojni opremi.
+\foreach \i in {1,...,3}
+  \node[neuron] (H\i) at (3, -\i - 0.5) {$h^{(1)}_{\i}$};
 
-Simetrija v arhitekturi mreže lahko vpliva na učenje; če so izhodne enote simetrične, morajo vmesne skrite enote omogočiti razločevanje vhodov. Zato so skrite enote ključnega pomena za uspešno predstavitev in razločevanje podatkov.
+\foreach \i in {1,...,2}
+  \node[neuron] (O\i) at (6, -\i - 1) {$y_{\i}$};
 
-% THIS IS END OF NEW CHAPTER
+% Forward arrows
+\foreach \i in {1,...,3} {
+  \foreach \j in {1,...,3}
+    \draw[arrow] (I\i) -- (H\j);
+}
+
+\foreach \i in {1,...,3} {
+  \foreach \j in {1,...,2}
+    \draw[arrow] (H\i) -- (O\j);
+}
+
+% Backward arrows (dashed)
+\foreach \i in {1,...,3} {
+  \foreach \j in {1,...,2}
+    \draw[->, dashed, red!70!black, thick] (O\j) -- (H\i);
+}
+
+\foreach \i in {1,...,3} {
+  \foreach \j in {1,...,3}
+    \draw[->, dashed, red!70!black, thick] (H\i) -- (I\j);
+}
+
+% Labels
+\node at (0,0.5) {\textbf{Vhodni sloj}};
+\node at (3,0.5) {\textbf{Skriti sloj}};
+\node at (6,0.5) {\textbf{Izhodni sloj}};
+
+\node at (1.5,-4.5) {\textcolor{black}{\textbf{Naprej (aktivacije)}}};
+\node at (4.5,-4.5) {\textcolor{red!70!black}{\textbf{Nazaj (napake)}}};
+
+\end{tikzpicture}
+\caption{Shema propagacije naprej (črne puščice) in nazaj (rdeče prekinjene puščice) v nevronski mreži.}
+\label{fig:backprop-shema}
+\end{figure}
