@@ -13,15 +13,18 @@
   \foreach \i [evaluate={
       \c=int(\i==\NI);
       \y = \NItotal/2 - \i - \c*\yshift;
-      \index = (\i==0 ? "b" : (\i==\NI ? "N^0" : int(\i)));
+      \index = (\i==0 ? "b" : (\i==\NI ? "N^{(0)}" : int(\i)));
     }] in {0,...,\NI} {
     
     \ifnum\i=0
       % Bias node
-      \node[node bias] (NI-\i) at (0,\y) {$1$};
+      \node[node bias] (NI-\i) at (0,\y) {$+1$};
     \else
       % Regular input nodes
       \node[node in,outer sep=0.6] (NI-\i) at (0,\y) {$h_{\index}^{(0)}$};
+      % Arrow into input node from the left
+      \draw[->, thick, draw=gray] ($(NI-\i) + (-0.4, 0)$) -- (NI-\i)
+        node[midway, above] {$x_{\index}$};
     \fi
   }
 

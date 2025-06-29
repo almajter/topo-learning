@@ -43,6 +43,7 @@
 \usepackage{amsmath} % for aligned
 \usepackage{listofitems} % for \readlist to create arrays
 \usepackage{tikz}
+\usetikzlibrary{calc}
 \usetikzlibrary{arrows.meta} % for arrow size
 \usetikzlibrary{fit}
 \usepackage[outline]{contour} % glow around text
@@ -62,6 +63,9 @@
 
 \definecolor{errorred}{RGB}{204, 0, 0}
 \definecolor{softerrorred}{RGB}{220, 20, 60}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
 
 % STYLES
 \tikzset{
