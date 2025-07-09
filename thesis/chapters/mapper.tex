@@ -1,4 +1,4 @@
-\chapter{Mapper algoritem}
+\chapter{algoritem Mapper}
 Algoritem Mapper je orodje za ekstrakcijo globalnih značilnosti iz visokodimenzionalnih podatkov, ki preoblikuje zapletene podatkovne množice v preproste simplicialne komplekse. Ti simplicialni kompleksi omogočajo kompakten globalni prikaz podatkov, neodvisno od individualnih razdalj, kotov ali točk.
 Algoritem ustvarja graf, ki odraža topološko strukturo izvornega oblaka točk. Začne z izbiro zvezne funkcije, ki se imenuje filter, $f : X \rightarrow Z$, ki na primer projicira prostor $X$ na podprostor $Z$. Nato določi končno odprto pokritje $\mathcal{U} = \{U_i\}_{i \in I}$ prostora $Z$. S pomočjo algoritma za združevanje v gruče se neodvisno obdela vsaka praslika $f^{-1}(U_i)$, od koder dobimo odprto pokritje $\mathcal{V} = \{V_j\}_{j \in J}$ oblaka točk. Končni Mapperjev graf ali simplicialni kompleks je opredeljen z živcem $\mathcal{V}$, nizom podmnožic $\mathcal{K}$ iz množice $J$ z nepraznimi presečišči. Vsaka podmnožica z $n+1$ indeksi predstavlja $n$-simpleks, kjer enočlenske podmnožice tvorijo vozlišča grafa, dvodelne pa njegove robove.
 \begin{comment}
@@ -9,7 +9,7 @@ https://danedmiston.github.io/home_page/assets/Mapper.pdf
 \section{Algoritem}
 V nadaljevanju so opisani koraki algoritma Mapper:
 \begin{algorithm}
-  \caption{Mapper algoritem}\label{alg:cap}
+  \caption{algoritem Mapper}\label{alg:cap}
   \begin{algorithmic}
     \State \textbf{Vhod:} Zbirka (množica) podatkov $X$ z metriko, funkcija $f: X \rightarrow \mathbb{R}$ (ali $\mathbb{R}^d$), in pokritje $\mathcal{U}$ prostora $f(X)$.
     \State \textbf{Algoritem:}

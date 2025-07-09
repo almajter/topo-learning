@@ -151,6 +151,8 @@ Na tem mestu bi se rad zahvalil družini za podporo v času mojega študija in m
   {\bf kratica} & {\bf angleško}               & {\bf slovensko}            \\ \hline
   {\bf TDA}     & topological data analysis    & topološka analiza podatkov \\
   {\bf PCA}     & principal component analysis & metoda glavnih komponent   \\
+  {\bf t-SNE}     & t-distributed stochastic neighbor embedding &    \\
+  {\bf UMAP}     & uniform manifold approximation and projection &    \\
 
   % {\bf DBMS} & database management system & sistem za upravljanje podatkovnih baz \\
   % {\bf SVM}   & support vector machine              & metoda podpornih vektorjev \\
@@ -197,7 +199,7 @@ Na tem mestu bi se rad zahvalil družini za podporo v času mojega študija in m
 \bigskip
 
 %\noindent\textbf{Abstract:} 
-\noindent With neural networks, we can solve a wide range of problems, yet it is often difficult to interpret what these models actually learn. The weights in a neural network develop during the learning process to solve the given problem. In this thesis, we will explore a method by which we can use topological data analysis to capture the structure composed of weights that arises during learning. The work is based on the article~\cite{Gabella2021}, where the method is described and demonstrated on a simple example. We will describe the mathematical background and concepts that allow us to graphically interpret the neural network based on the Mapper algorithm.
+\noindent With neural networks, we can solve a wide range of problems, yet it is often difficult to interpret what these models actually learn. The weights in a neural network develop during the learning process to solve the given problem. In this thesis, we will explore a method by which we can use topological data analysis to capture the structure composed of weights that arises during learning. The work is based on the article~\cite{Gabella2021}, where the method is described and demonstrated on a simple example. We will describe the mathematical background and concepts that allow us to graphically interpret the neural network based on the Mapper algorithm .
 \bigskip
 
 \noindent\textbf{Keywords:} \tkeywordsEn.
@@ -216,13 +218,11 @@ Na tem mestu bi se rad zahvalil družini za podporo v času mojega študija in m
 
 \include{chapters/nevronske-mreze}
 
-\include{chapters/pca}
+\include{chapters/dimensionality-reduction}
 
 \include{chapters/tda}
 
-\include{chapters/mapper}
-
-\include{chapters/zakljucek}
+\include{chapters/experiments}
 
 \cleardoublepage{}
 

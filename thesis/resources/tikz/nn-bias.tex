@@ -8,7 +8,6 @@
   \message{^^Layers in Neural network}
   \readlist\Nnod{4,5,5,5,3} % array of number of nodes per layer
   \readlist\Nstr{n,m,m,m,k} % array of string number of nodes per layer
-  % \readlist\Cstr{\strut x,a^{(\prev)},a^{(\prev)},a^{(\prev)},y} % array of coefficient symbol per layer
   \def\yshift{0.5} % shift last node for dots
   
   \message{^^Drawing Layers}
@@ -33,10 +32,7 @@
         \x=\lay; \n=\nstyle;
       }] in {\firstIndex,...,\N} {
 
-      % \node[node \n] (N\lay-\i) at (\x,\y) {};
-
       \ifnum\i=0
-        % \node[circle, draw=teal!60!black, fill=teal!20, minimum size=8pt, inner sep=2pt] (N\lay-\i) at (\x,\y) {};
         \node[node bias] (N\lay-\i) at (\x,\y) {+1};
       \else
         \node[node \n] (N\lay-\i) at (\x,\y) {};
@@ -61,20 +57,4 @@
     % Dots
     \path (N\lay-\N) --++ (0,1+\yshift) node[midway,scale=1.5] {$\vdots$};
   }
-  
-  % RECTANGLE
-  % \node[
-  %   draw=myblue!40,
-  %   fill=myblue,
-  %   fill opacity=0.02,
-  %   rounded corners=2,
-  %   inner sep=10pt,
-  %   fit=(N2-1)(N4-5)
-  % ] {};
-
-  % LABELS
-  % \node[above=5,align=center,softorange!60!black] at (N1-1.90) {vhodni\\[-0.2em]sloj};
-  % \node[above=10,align=center,myblue!60!black] at (N3-1.90) {skriti sloji};
-  % \node[above=5,align=center,myred!60!black] at (N\Nnodlen-1.90) {izhodni\\[-0.2em]sloj};
-  
 \end{tikzpicture}
