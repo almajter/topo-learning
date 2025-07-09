@@ -43,7 +43,9 @@
 \usepackage{amsmath} % for aligned
 \usepackage{listofitems} % for \readlist to create arrays
 \usepackage{tikz}
+\usetikzlibrary{calc}
 \usetikzlibrary{arrows.meta} % for arrow size
+\usetikzlibrary{fit}
 \usepackage[outline]{contour} % glow around text
 \contourlength{1.4pt}
 
@@ -56,24 +58,32 @@
 \colorlet{mydarkred}{red!30!black}
 \colorlet{mydarkblue}{blue!40!black}
 \colorlet{mydarkgreen}{green!30!black}
+\colorlet{mydarkorange}{orange!30!black}
+\colorlet{softorange}{orange!80}
+
+\definecolor{errorred}{RGB}{204, 0, 0}
+\definecolor{softerrorred}{RGB}{220, 20, 60}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
 
 % STYLES
 \tikzset{
   >=latex, % for default LaTeX arrow head
-  node/.style={thick,circle,draw=myblue,minimum size=22,inner sep=0.5,outer sep=0.6},
-  node in/.style={node,green!20!black,draw=mygreen!30!black,fill=mygreen!25},
-  node hidden/.style={node,blue!20!black,draw=myblue!30!black,fill=myblue!20},
-  node convol/.style={node,orange!20!black,draw=myorange!30!black,fill=myorange!20},
-  node out/.style={node,red!20!black,draw=myred!30!black,fill=myred!20},
+  node/.style={thick,circle,draw=myblue,minimum size=28,inner sep=0.5,outer sep=0.6},
+  node in/.style={node, draw=none, fill=softorange!25},
+  node hidden/.style={node,blue!20!black,draw=none,fill=myblue!20},
+  node convol/.style={node,orange!20!black,draw=none,fill=myorange!20},
+  node out/.style={node,red!20!black,draw=none,fill=myred!20},
+  node bias/.style={node,gray!20!black,draw=none,fill=gray!20},
   connect/.style={thick,mydarkblue}, %,line cap=round
   connect arrow/.style={-{Latex[length=4,width=3.5]},thick,mydarkblue,shorten <=0.5,shorten >=1},
   node 1/.style={node in}, % node styles, numbered for easy mapping with \nstyle
   node 2/.style={node hidden},
-  node 3/.style={node out}
+  node 3/.style={node out},
+  connect arrow/.style={->, draw=gray}
 }
-\def\nstyle{int(\lay<\Nnodlen?min(2,\lay):3)} % map layer number onto 1, 2, or 3
-
-
+\def\nstyle{int (\lay<\Nnodlen?min (2,\lay):3)} % map layer number onto 1, 2, or 3
 
 \usepackage[
 backend=biber,
@@ -87,13 +97,13 @@ sorting=nty,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %	DIPLOMA INFO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\ttitle}{Topologija učenja nevronskih mrež}
+\newcommand{\ttitle}{Topologija učenja v nevronskih mrežah}
 \newcommand{\ttitleEn}{Topology of learning in neural networks}
 \newcommand{\tsubject}{\ttitle}
 \newcommand{\tsubjectEn}{\ttitleEn}
 \newcommand{\tauthor}{Maj Alter}
-\newcommand{\tkeywords}{Nevronske mreže, Metoda glavnih komponent, Mapper algoritem}
-\newcommand{\tkeywordsEn}{Neural networks, Principal component analysis, Mapper algorithm}
+\newcommand{\tkeywords}{Nevronske mreže, Topološka analiza podatkov, algoritem Mapper}
+\newcommand{\tkeywordsEn}{Neural networks, Topological data analysis, Mapper algorithm }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %	HYPERREF SETUP
@@ -117,7 +127,7 @@ sorting=nty,
 {\markboth{\MakeUppercase{\thechapter.\ #1}}{}} \renewcommand{\sectionmark}[1]%
 {\markright{\MakeUppercase{\thesection.\ #1}}} \renewcommand{\headrulewidth}{0.5pt} \renewcommand{\footrulewidth}{0pt}
 \fancyhf{}
-\fancyhead[LE,RO]{\sl \thepage} 
+\fancyhead[LE,RO]{\sl \thepage\/}
 %\fancyhead[LO]{\sl \rightmark} \fancyhead[RE]{\sl \leftmark}
 \fancyhead[RE]{\sc \tauthor}              % dodal Solina
 \fancyhead[LO]{\sc Diplomska naloga}     % dodal Solina
@@ -139,10 +149,11 @@ sorting=nty,
 % konstrukti
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 \newtheorem{izrek}{Izrek}[chapter]
-\newtheorem{trditev}{Trditev}[izrek]
-\newtheorem{definicija}{Definicija}[izrek]
+\newtheorem{trditev}{Trditev}[chapter]
+\newtheorem{definicija}{Definicija}[chapter]
 \newenvironment{dokaz}{\emph{Dokaz.}\ }{\hspace{\fill}{$\Box$}}
 
+\floatname{algorithm}{Algoritem} % Preimenujemo algorithm v algoritem
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PDF-A

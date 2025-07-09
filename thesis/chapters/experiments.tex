@@ -1,0 +1,33 @@
+\chapter{Eksperimenti}
+
+V tem poglavju bomo predstavili nekaj razširitev članka~\cite{Gabella2021}. V prvem delu bomo predstavili rezultate z uporabo alternativnih 
+dela učenja evolucije nevrosnkih mrež. V prvem delu bomo prikazali rezultate Mapper grafov z različnimi filtrirnimi funkcijami in nato uporabo vztrajne homologije z Vietoris-Ripsovo filtracijo.
+
+
+\section{Analiza z algoritmom MAPPER po Gabelli (2020)}
+
+Iztočnica za to poglavje je članek Gabella iz leta 2020~\cite{gabella2020}, kjer avtor uporabi algoritem \textit{MAPPER} za analizo uteži nevronske mreže med procesom učenja. Gre za nadaljevanje idej, predstavljenih v predhodnem delu Gabriela in Carlssona iz leta 2019~\cite{carlsson2019}, kjer sta avtorja s pomočjo MAPPER algoritma vizualizirala prostor prostorskih filtrov (jedra velikosti $3 \times 3$) v konvolucijski nevronski mreži (CNN).
+
+V Gabellovi raziskavi je treniral preprosto naprej usmerjeno nevronsko mrežo z eno skrito plastjo, ki je vsebovala 100 nevronov, na podatkovni zbirki \textsc{MNIST}, ki vsebuje ročno pisane števke. Skrita plast je uporabljala sigmoidno aktivacijsko funkcijo, izhodna plast pa \textit{softmax}. Za funkcijo izgube je bila uporabljena navzkrižna entropija.
+
+Avtor je v vsakem koraku učenja (po določenem številu mini-serij) zajel trenutne vrednosti uteži. Zaradi poenostavitve je izključil pristranskosti (bias), tako da je vsaka stolpčna vektorja utežne matrike predstavljala točko v visoko-dimenzionalnem prostoru. S tem je dobil oblak točk, ki predstavljajo razvoj uteži med učenjem.
+
+Zatem je na tem oblaku uteži uporabil MAPPER algoritem. Predpostavka je bila, da bo rezultat – topološki graf – razkril strukturo prostora uteži in nakazal razvoj modela skozi čas. Rezultati (skupaj s PCA projekcijami) so pokazali, da se uteži organizirajo v drevesno strukturo, kjer se skupki razvejajo v različne veje. Ta pojav je bil še posebej izrazit pri izhodni plasti, kjer je število listov sovpadalo s številom izhodnih nevronov (tj. deset števk v \textsc{MNIST}).
+
+Morda najzanimivejša ugotovitev eksperimenta je bila, da je vsaka točka razvejitve v grafu sovpadla z izboljšanjem točnosti modela. S tem se je nakazala povezava med strukturo prostora uteži in uspešnostjo modela~\cite{gabella2020}.
+
+\section{Razširitev: različne filtracije in trajna homologija}
+
+V tem delu razširjamo Gabellovo delo z uporabo alternativnih pristopov za analizo topologije prostora uteži. Osredotočamo se na dve glavni smeri:
+
+\begin{enumerate}
+    \item \textbf{Različne filtracijske funkcije v algoritmu MAPPER:} preučili smo vpliv izbire filtracijske funkcije oziroma projekcije (t.\ i.\ \emph{leče}) na strukturo nastalega grafa. Uporabili smo naslednje metode:
+    \begin{itemize}
+        \item \textbf{PCA} (glavne komponente),
+        \item \textbf{t-SNE} (stohastično vgrajevanje sosednosti),
+        \item \textbf{UMAP} (uniformna manifoldna aproksimacija in projekcija).
+    \end{itemize}
+    Cilj je bil primerjati, kako vsaka od teh tehnik projicira podatke in kako to vpliva na topološko strukturo MAPPER grafa.
+
+    \item \textbf{Trajna homologija z Vietoris--Ripsovo filtracijo:} zgradili smo Vietoris--Ripsove komplekse na različnih korakih učenja in analizirali njihovo trajno homologijo. Na ta način smo kvantitativno opisali, kako se topološke značilnosti (komponente, luknje itd.) razvijajo v prostoru uteži. Analiza je temeljila na izračunu barvnih diagramov (\emph{persistence diagrams}) in krivulj trajanja (\emph{persistence barcodes}).
+\end{enumerate}

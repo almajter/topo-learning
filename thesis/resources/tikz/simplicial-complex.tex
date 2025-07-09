@@ -1,0 +1,38 @@
+\begin{tikzpicture}[scale=2, vertex/.style={circle, fill=black, inner sep=1.5pt}]
+
+% === Tetrahedron faces ===
+\fill[myblue!30] (1,0) -- (0.5,0.9) -- (0.6,-0.7) -- cycle;        % right face
+\fill[myblue!30] (0,0) -- (1,0) -- (0.6,-0.7) -- cycle;             % bottom face
+\fill[myblue!50] (0,0) -- (0.6,-0.7) -- (0.5,0.9) -- cycle;         % left face
+
+  % === Fill the triangle on the right ===
+  \fill[myblue!30] (2.4,-0.2) -- (2.9,0.4) -- (2.2,0.5) -- cycle;
+
+  % === Tetrahedron edges ===
+  \draw[dashed, myblue] (0,0) -- (1,0);              % base front edge
+  \draw[thick, myblue] (0,0) -- (0.5,0.9);          % left front edge
+  \draw[thick, myblue] (1,0) -- (0.5,0.9);          % right front edge
+  \draw[thick, myblue] (0,0) -- (0.6,-0.7);         % left bottom edge
+  \draw[thick, myblue] (0.6,-0.7) -- (0.5,0.9);     % back-left edge
+  \draw[thick, myblue] (1,0) -- (0.6,-0.7);        % back-bottom hidden edge
+
+  % === Edge between components ===
+  \draw[thick, myblue] (1,0) -- (1.8,0.1);
+
+  % === Triangle on the right ===
+  \draw[thick, myblue] (2.4,-0.2) -- (2.9,0.4) -- (2.2,0.5) -- cycle;
+
+  % === Vertical edge above the triangle ===
+  \draw[thick, myblue] (2.55,0.95) -- (2.2,0.45);
+
+  % === Vertices ===
+  \foreach \x/\y in {
+    0/0, 1/0, 0.5/0.9, 0.6/-0.7,
+    1.8/0.1,
+    2.4/-0.2, 2.9/0.4, 2.2/0.5,
+    2.55/0.95
+  } {
+    \node[vertex] at (\x,\y) {};
+  }
+
+\end{tikzpicture}

@@ -1,0 +1,60 @@
+\tikzset{
+  connect arrow/.style={->, draw=gray}
+}
+
+% LAYERS IN NEURAL NETWORK
+\begin{tikzpicture}[scale=1.25,x=2.2cm,y=1.4cm]
+
+  \message{^^Layers in Neural network}
+  \readlist\Nnod{4,5,5,5,3} % array of number of nodes per layer
+  \readlist\Nstr{n,m,m,m,k} % array of string number of nodes per layer
+  \def\yshift{0.5} % shift last node for dots
+  
+  \message{^^Drawing Layers}
+  \foreachitem \N \in \Nnod { % loop over layers
+    \def\lay{\Ncnt} % current layer index
+    \pgfmathsetmacro\prev{int(\Ncnt - 1)} % previous layer index
+    \message{\lay,}
+
+    % Number of total nodes in this layer including bias if not last
+    \ifnum\lay<\Nnodlen
+      \pgfmathsetmacro\Nwithbias{\N + 1}
+      \def\firstIndex{0}
+    \else
+      \pgfmathsetmacro\Nwithbias{\N}
+      \def\firstIndex{1}
+    \fi
+
+    % All neurons in layer: bias (index 0) + regular (1..N)
+    \foreach \i [evaluate={
+        \c=int(\i==\N);
+        \y=\N/2-\i-\c*\yshift;
+        \x=\lay; \n=\nstyle;
+      }] in {\firstIndex,...,\N} {
+
+      \ifnum\i=0
+        \node[node bias] (N\lay-\i) at (\x,\y) {+1};
+      \else
+        \node[node \n] (N\lay-\i) at (\x,\y) {};
+      \fi
+
+      % Only connect if NOT bias node
+      \ifnum\i>0
+        \ifnum\lay>1
+          \ifnum\prev<\Nnodlen
+            \foreach \j in {0,...,\Nnod[\prev]} {
+              \draw[connect arrow] (N\prev-\j) -- (N\lay-\i);
+            }
+          \else
+            \foreach \j in {1,...,\Nnod[\prev]} {
+              \draw[connect arrow] (N\prev-\j) -- (N\lay-\i);
+            }
+          \fi
+        \fi
+      \fi
+    }
+
+    % Dots
+    \path (N\lay-\N) --++ (0,1+\yshift) node[midway,scale=1.5] {$\vdots$};
+  }
+\end{tikzpicture}

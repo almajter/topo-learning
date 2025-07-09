@@ -1,125 +1,172 @@
 \chapter{Topološka analiza podatkov}
 
-Topološka analiza podatkov (TDA, ang.\ topological data analysis) je novejša veda, ki se je začela razvijati šele v zgodnjih letih tega tisočletja. Navdih za njen razvoj izhaja iz tega, da lahko s koncepti iz topologije (vede oblik) in geometrije (vede prostora in dimenzij)  razumemo strukturo kompleksnih podatkov kot tudi nekatere podrobne in specifične informacije o njih. Ta pristop nam pomaga vizualizirati in analizirati celotno strukturo in vzorce, ki se skrivajo v podatkih, ter je manj občutljiv na majhne spremembe ali šume. TDA nam ponuja ogromno metod za analizo podatkov, ki so običajno predstavljeni v obliki oblaka oz.\ množice točk (ang.\ point cloud).
+Topološka analiza podatkov (angl. Topological Data Analysis, TDA) je sodoben pristop k analizi podatkov, s katerim poskušamo razumeti obliko visokodimenzionalnih podatkovnih množic. Preučuje, kako so podatki med seboj povezani in razporejeni v prostoru, ali obstajajo kakšne povezave, zanke, praznine ter iz koliko komponent (gruč) so sestavljeni.
+V praksi so se metode TDA izkazale kot zelo učinkovite pri analizi visokodimenzionalnih, razpršenih podatkov, ki vsebujejo veliko šuma. Ena izmed izmed takih metod algoritem Mapper, ki podatkovno množico pretvori v preprost simplicialni kompleks.
 
-V tem poglavju bomo obravnavali nekaj osnovnih pojmov TDA, ki nam bodo kasneje v pomoč za vizualizacijo nevronske mreže s pomočjo algoritma Mapper. Defnirali bomo simplicialne komplekse in predstavili različne načine konstrukcije na podatkovnih množicah. Podali bomo Izrek o živcu, ki je glava motivacija za uporabo metod topološke analize podatkov.
+\section{Simpleksi}
 
-
-
-\section{Glavni koraki TDA}
-Kljub temu, da dandanes obstaja že veliko metod z različnimi aplikacijami, jih večina sledi naslednjim korakom:
-\begin{enumerate}
-  \item Vhod predstavlja končna množica točk z določeno razdaljo ali merilom podobnosti, ki je lahko osnovana na metriki okoljskega prostora (kot je evklidska v $R^d$) ali na lastni metriki, izračunani iz matrike razdalj med pari. Ta metrika je pogosto vnaprej določena ali diktirana s strani specifične uporabe. Vendar pa je izbira prave metrike ključnega pomena za odkrivanje pomembnih topoloških in geometrijskih lastnosti podatkov.
-  \item Nad podatki se ustvari kontinuirana struktura, običajno preprost kompleks ali serija takih kompleksov, znana kot filtracija, ki razkriva topologijo ali geometrijo podatkov. Ti kompleksi, ki so v bistvu razširitve grafov v višje dimenzije, pomagajo prikazati strukturo podatkov na različnih ravneh. Izziv je ustvariti strukture, ki ne le natančno odražajo strukturo podatkov, ampak jih je tudi mogoče učinkovito graditi in spreminjati.
-  \item Iz teh struktur se izluščijo topološke ali geometrijske podrobnosti. To lahko vključuje rekonstrukcijo osnovne oblike podatkov, na primer s triangulacijo, kar olajša dostop do njenih značilnosti, ali ustvarjanje preprostih povzetkov, ki zahtevajo specializirane metode, kot je trajna homologija, za pridobivanje nekaterih informacij. Ključna naloga tukaj je dokazati uporabnost in zanesljivost teh informacij, še posebej, kako se obnesejo v primeru napak ali šuma v podatkih.
-  \item Razkrite informacije o topologiji in geometriji podatkov nudijo nove vrste značilnosti in opisov. Te lahko izboljšajo naše razumevanje podatkov, zlasti preko vizualnih metod, ali pa se integrirajo z drugimi značilnostmi podatkov za širšo analizo in aplikacije strojnega učenja. Uporaba teh informacij za ustvarjanje prilagojenih modelov analize podatkov in strojnega učenja je ključni del izkoriščanja tega, kar ponujajo orodja TDA.\@
-\end{enumerate}
-
-\section{Simpleks}
-V nadaljevanju bomo potrebovali pojem simplicialnih kompleksov, katerih osnovni gradniki so simpleksi, ki jih bomo opisali v tem razdelku. Pri tem bomo sledili~\cite{Urbančič_2020} in  Intuitivno so $n$-simpleksi geometrijski objekti z $(n + 1)$ oglišči, ki ležijo v $n$-dimenzionalnem prostoru in jih ne moremo vstaviti v nižje dimenzionalni prostor. Za gradnjo $n$-simpleksa v $n$-dimenzionalnem prostoru potrebujemo $(n + 1)$ afino neodvisnih točk.
+Simpleksi so osnovni gradniki simplicialnih kompleksov. Intuitivno so $n$-simpleksi geometrijski objekti z $(n + 1)$ oglišči, ki ležijo v $n$-dimenzionalnem prostoru in jih ne moremo vstaviti v nižje dimenzionalni prostor. Za gradnjo $n$-simpleksa v $n$-dimenzionalnem prostoru potrebujemo $(n + 1)$ afino neodvisnih točk.
 
 \begin{definicija}
-  Množica točk $\{x_0, \dots, x_n\}$ v vektorskem prostoru $V$ je \textbf{afino neodvisna}, če je $\{x_1 - x_0, \dots, x_n - x_0\}$ linearno neodvisna.
+    Množica točk $\{x_0, \dots, x_n\}$ v vektorskem prostoru $V$ je \textbf{afino neodvisna}, če je $\{x_1 - x_0, \dots, x_n - x_0\}$ linearno neodvisna.
 \end{definicija}
 
-Matematično lahko simplekse definiramo na naslednji način.
+S pomočjo zgornje definicije lahko simplekse matematično definiramo na naslednji način~\cite{Munkers84}.
 
 \begin{definicija}
-  Naj bo \(X = \{x_0, x_1, \dots, x_n\}\) poljubna družina afino neodvisnih točk v prostoru \(\mathbb{R}^d\) za nek \(n \geq d\). Konveksno ovojnico množice \(X\),
-  \[
-    C_n(X) = C_k(x_0, x_1, \dots, x_n) = \{\sum_{i=0}^n \alpha_i x_i : \forall \alpha_i \in [0, 1], \sum_{i=0}^n \alpha_i = 1\},
-  \]
-  imenujemo \(n\)-simpleks na množici \(X\).
+Naj bo \(X = \{x_0, x_1, \dots, x_n\}\) množica afino neodvisnih točk v prostoru \(\mathbb{R}^d\), kjer velja \(n \leq d\). Konveksno ovojnico množice \(X\),
+\[
+\operatorname{conv}(X) = \left\{ \sum_{i=0}^n \alpha_i x_i \;\middle|\; \alpha_i \in [0,1], \sum_{i=0}^n \alpha_i = 1 \right\},
+\]
+imenujemo \(n\)-simpleks na množici \(X\).
 \end{definicija}
-
-Točke \(X\) imenujemo oglišča \(\sigma\), simplekse ki jih razpenjajo podmnožice \(X\) pa imenujemo lica \(\sigma\).
-
-\begin{comment}
-\begin{definicija}
-  Za množico \(X = \{x_0, \dots, x_k\} \subseteq \mathbb{R}^d\), \(k + 1\) afino neodvisnih točk, je \(k\)-dimenzionalni simpleks \(\sigma = [x_0, \dots, x_k]\), ki ga razpenja \(X\) konveksna ogrinjača \(X\). \\
-  Točke \(X\) imenujemo oglišča \(\sigma\), simplekse ki jih razpenjajo podmnožice \(X\) pa imenujemo lica \(\sigma\).
-\end{definicija}
-\end{comment}
-
-Simplekse za $n = 0, 1, 2, 3$ si lahko predstavljamo vizualno.
 
 \begin{figure}[H]
   \centering
-  \includegraphics{resources/simplex.png}
-  \caption{Simpleksi v dimenzijah 0, 1, 2 in 3. Vir:~\cite{schneider_simplexes}}\label{fig:enter-label1}
+  \input{resources/tikz/basic-simplices.tex}
+  \caption{Simpleksi v dimenzijah 0, 1, 2 in 3}~\label{fig:basic-simplices}
 \end{figure}
 
-\begin{comment}
-https://www.google.com/url?sa=i&url=http%3A%2F%2Fhomepages.math.uic.edu%2F~jschnei3%2FWriting%2FSimplexes&psig=AOvVaw04OUzRkF8vt7xrPuG6vtjd&ust=1714986382590000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOje9KOU9oUDFQAAAAAdAAAAABAK
-\end{comment}
+%Točke \(X\) imenujemo oglišča \(\sigma\), simplekse ki jih razpenjajo podmnožice \(X\) pa imenujemo lica \(\sigma\).
 
-\section{Simplicialni kompleks}
-Za analizo topoloških prostorov je zelo pomembno, da jih znamo predstaviti na enostavnejši način. Za to lahko uporabljamo simplicialne komplekse, na katere lahko gledamo kot na kombinatorične opise topološkega prostora.
-
+\section{Simplicialni kompleksi}
+Simplicialni kompleksi so kombinatorični opisi topološkega prostora.
 \begin{definicija}
-  Simplicialni kompleks \(K\) v prostoru \(R^d\) je zbirka simpleksov, tako da velja:
+Simplicialni kompleks \(K\) v prostoru \(R^d\) je množica simpleksov, tako da velja:
   \begin{enumerate}
     \item Vsako lice poljubnega simpleksa v simplicialnemu kompleksu \(K\) je tudi samo simpleks v \(K\).
-    \item Naj bosta \(\sigma_1\) in \(\sigma_2\) poljubna simpleksa v \(K\).\ \v{C}e se sekata, potem je njun presek \(\sigma_1 \cap \sigma_2\) lice simpleksov obeh \(\sigma_1\) in \(\sigma_2\) ter je simpleks v \(K\).
-  \end{enumerate}
-\end{definicija}
-
-\begin{definicija}
-  \textit{Geometrijski simplicialni kompleks $K$} na množici $V$ je končna množica simpleksov, ki zadoščajo naslednjima dvema pogojema:
-  \begin{enumerate}
-    \item Poljubno lice kateregakoli simpleksa K je simpleks v K.
-    \item Presek poljubnih dveh simpleksov v K je prazna množica ali skupno lice obseh simpleksov.
+    \item Naj bosta \(\sigma_1\) in \(\sigma_2\) poljubna simpleksa v \(K\). \v{C}e se sekata, potem je njun presek \(\sigma_1 \cap \sigma_2\) lice simpleksov \(\sigma_1\) in \(\sigma_2\) ter je simpleks v \(K\).
   \end{enumerate}
 \end{definicija}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{resources/Simplicial-complex-eight-vertices.png}
-  \caption{Simplicialni kompleks z osmimi vozlišči Vir:~\cite{researchgate_simplicial_complex}}\label{fig:your-label3}
+  \input{resources/tikz/simplicial-complex.tex}
+  \caption{Simplicialni kompleks}~\label{fig:simplicial-complex}
 \end{figure}
-\begin{comment}
-https://www.researchgate.net/publication/358508552/figure/fig4/AS:1134810642817026@1647571349635/Simplicial-complex-An-example-of-a-simplicial-complex-composed-of-eight-vertices.png
-\end{comment}
 
-\begin{definicija}
-  \textit{Abstraktni simpli\v{c}ialni kompleks} \(K\) na množici \(V\) je družina podmnožic množice \(V\), za katero velja
-  \[
-    \forall F \in K. \ G \subseteq F \implies G \in K.
-  \]
-  Množice \(F \in K\) imenujemo abstraktni simpleksi, njihovim podmnožicam \(G \subseteq F\) pa lica abstraktnega simpleksa \(F\). Dimenzijo abstraktnega simpleksa \(F\) definiramo kot \(\dim(F) = |F| - 1\). Dimenzijo abstraktnega simpli\v{c}ialnega kompleksa definiramo kot maksimalno dimenzijo njegovih simpleksov:
-  \[
-    \dim(K) = \max(\{\dim(F) \ | \ F \in K\}).
-  \]
-\end{definicija}
+\section{Vietoris–Ripsova filtracija}
+Eden najbolj uporabljenih načinov za gradnjo simplicialnih kompleksov iz podatkov je \textbf{Vietoris–Ripsov kompleks}. Postopek je sledeč:
+\begin{itemize}
+  \item Imamo množico točk v prostoru in izberemo parameter $\epsilon > 0$.
+  \item Povežemo vsaka dva podatkovna vektorja (točki), ki sta bližje kot $\epsilon$.
+  \item Če so vse povezave med trojico točk prisotne, dodamo trikotnik.
+  \item Če vse povezave med četverico točk obstajajo, dodamo tetraeder itd.
+\end{itemize}
 
-
-\section{Gradnja simplicialnih kompleksov iz podatkov}
-Simplicialne komplekse je možno zgraditi iz množice podatkov. V tem poglavju bomo opisali dva pogosto uporabljena načina. Pri tem bomo sledili~\cite{10.1007/978-3-319-45378-1_1}. Privzamemo da imamo podano množico točk $X$ v metričnem prostoru $(M, d)$ in realno število $\alpha \geq 0$. Predstavili bomo dva načina, ki sta pogosto uporabljena v praksi.~\cite{kun2015cech}
-\begin{comment}
-https://www.jeremykun.com/2015/08/06/cech-vietoris-rips-complex/
-\end{comment}
-
-\subsection{Vietoris-Ripsov kompleks}
-Prvi primer temelji na konceptu $\alpha$-soseščine. Vietoris-Ripsov kompleks $Rips_{\alpha}(\mathcal{X}) \text{ je množica simpleksov } [x_0, \ldots, x_k] \text{, tako da velja } d_{\mathcal{X}}(x_i, x_j) \leq \alpha. \text{za vse (i,j)}$. Po definiciji sledi, da je abstraktni simplicialni kompleks, v splošnem pa ne velja, da je tudi geometrični.
-
-\subsection{Čehov kompleks}
-Zelo podoben Vietoris-Ripsovem kompleksu je Čehov kompleks $C_\varepsilon$, katerega simpleksi so definirani kot množica simpleksov $[x_0, \ldots, x_k] \text{, tako da ima k + 1 zaprtih krogel} B(x_i, \alpha)$ neprazen presek.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\linewidth]{resources/cech-vs-vietoris-rips-complex.png}
-  \caption{Čehov in Vietoris-Ripsov kompleks. Vir:~\cite{justinmath_persistent_homology}}\label{fig:backprop2}
-\end{figure}
+S tem postopkom zgradimo simplicialni kompleks za določen $\epsilon$. Če ta parameter povečujemo, dobimo zaporedje kompleksov:
+\[
+K_0 \subseteq K_1 \subseteq K_2 \subseteq \cdots \subseteq K_n,
+\]
+kar imenujemo \textbf{filtracija}. S filtracijo opazujemo, kako se topološka struktura spreminja skozi različne vrednosti $\epsilon$.
 
 \section{Izrek o živcu}
-V tem razdelku bomo predstavili izrek o živcu, ki je osnova za Mapper algoritem, saj nam zagotavlja, da je živec, ki ga dobimo iz pokritja topološkega prostora homotopsko ekvivalenten prostoru. Izrek bomo podali brez dokaza.~\cite{GuzeljBlatnik2020}
 
-\begin{izrek}[Izrek o živcu]
-  Naj bo \( X \) topoološki prostor in \( \mathcal{U} = \{ U_i \}{}_{i \in I} \) odprto pokritje \( X \). Živec \( N(\mathcal{U}) \) pokritja \( \mathcal{U} \) je simplicialni kompleks:
-  \begin{itemize}
-    \item Vozlišča \( N(\mathcal{U}) \) ustrezajo mnnožicam \( U_i \) v pokritju.
-    \item Končna podmnožica \( \{ U_{i_0}, U_{i_1}, \ldots, U_{i_k} \} \) pokritja \( \mathcal{U} \) tvori \( k \)-simpleks v \( N(\mathcal{U}) \), če in samo če je presek \( U_{i_0} \cap U_{i_1} \cap \cdots \cap U_{i_k} \) neprazen.
-  \end{itemize}
-  Če je pokritje \( \mathcal{U} \) is \textit{dobro} (t.j., vsako končno presečišče množic v pokritju je bodisi prazno bodisi kontraktibilno), potem je topološki prostor \( X \) homotopsko ekvivalenten živcu \( N(\mathcal{U}) \). Z drugimi besedami,
-  \[ X \simeq N(\mathcal{U}). \]
+Na naslednji način lahko na končnem pokritju definiramo simplicialni kompleks, ki ga imenujemo živec pokritja
+
+\begin{definicija}
+Naj bo $U = \{U_\alpha\}_{\alpha \in A}$ končno pokritje prostora $X$. Živec pokritja $U$ definiramo kot simplicialni kompleks $\mathcal{N}(U)$, katerega množica oglišč je indeksna množica $A$, in kjer je družina $\{\alpha_0, \alpha_1, \dots, \alpha_k\}$ $k$-simpleks v $\mathcal{N}(U)$ natanko tedaj, ko velja $U_{\alpha_0} \cap U_{\alpha_1} \cap \dots \cap U_{\alpha_k} \ne \emptyset$.
+\end{definicija}
+
+V splošnem ne moremo trditi, da bo živec imel enake topološke lastnosti kot prostor \( X \). Ravno zato je \textit{izrek o živcu} ključen: pod določenimi pogoji zagotavlja, da sta živec \( \mathcal{N}(\mathcal{U}) \) in prostor \( X \) homotopsko ekvivalentna, tj. jih lahko zvezno preoblikujemo drug v drugega.
+
+\begin{izrek}[Nervni izrek, Hatcher Cor. 4G.3]
+Naj bo \(X\) parakomptni Hausdorffov prostor in \(\mathcal{U} = \{U_i\}_{i\in I}\) odprto pokritje prostora \(X\), v katerem so vse končne nepravilne preseke \(U_{i_0}\cap\dots\cap U_{i_k}\) kontraktibilni (tj. cover je \emph{dobar}). Potem je živec \(\mathcal{N}(\mathcal{U})\) homotopsko ekvivalenten prostoru \(X\):
+\[
+X \simeq \lvert\mathcal{N}(\mathcal{U})\rvert.
+\]
 \end{izrek}
+
+\begin{dokaz}[Oskrbljen skica dokaz]
+1. Ker je \(X\) parakomptni Hausdorffov, obstaja subtendentna \emph{particija enotnosti} \(\{\varphi_i: X\to[0,1]\}\), kjer \(\varphi_i(x)=0\) zunaj \(U_i\), in \(\sum_i\varphi_i(x)=1\) za vsak \(x\).
+
+2. Definiramo preslikavo
+\[
+f: X \;\longrightarrow\; \lvert\mathcal{N}(\mathcal{U})\rvert,  
+\qquad
+x \;\longmapsto\; \sum_i \varphi_i(x)\,v_i,
+\]
+kjer so \(v_i\) oglišča ugnezdene kompleksa, pomešana s powersko kombinacijo. Zaradi kontraktibilnih presekov ta preslikava dejansko obišče samo predele, kjer je baricentričen sodoben angažma možen.
+
+3. Hatcher dokaže, da je \(f\) homotopska ekvivalenca. Naredi jo tako, da pokaže komutativne verižnice in nato uporabi standardna topološka dejstva o homotopski ekvivalenci na pasulji.
+
+4. Zaključimo, da je \(X\) homotopsko ekvivalenten \(\lvert\mathcal{N}(\mathcal{U})\rvert\).
+
+Ta izrek je tako temeljna povezava med pokritjem prostora in simplicialnim povzetkom oblike.
+\end{dokaz}
+
+
+\section{Vztrajna homologija}
+Vztrajna homologija je metoda, ki sledi, kako se topološke značilnosti (komponente, zanke, votline) pojavljajo in izginjajo skozi filtracijo.
+
+Za vsako dimenzijo $k$ štejemo $k$-dimenzionalne luknje:
+\begin{itemize}
+  \item V dimenziji 0: koliko ločenih komponent obstaja.
+  \item V dimenziji 1: koliko zank ali obročev.
+  \item V dimenziji 2: koliko votlih prostorov.
+\end{itemize}
+
+Ko povečujemo $\epsilon$, se nekatere značilnosti pojavijo (rojstvo), druge izginejo (smrt). Zabeležimo jih v obliki:
+\[
+(\epsilon_\text{rojstvo}, \epsilon_\text{smrt})
+\]
+
+Daljši kot je razmik med rojstvom in smrtjo, bolj \textbf{vztrajna} je značilnost. Takšne značilnosti veljajo za pomembne. Te podatke vizualiziramo kot:
+\begin{itemize}
+  \item \textbf{Vztrajni diagram} – točke nad diagonalo $(\epsilon_\text{rojstvo}, \epsilon_\text{smrt})$.
+  \item \textbf{Črtne kode} – vsaka značilnost je predstavljena kot daljica.
+\end{itemize}
+
+Persistentna homologija nam omogoča izluščiti robustne strukturne značilnosti podatkov in jih ločiti od šuma. Skupaj z Vietoris–Ripsovo filtracijo tvori eno osrednjih orodij v TDA.
+
+\section{Mapper}
+Primer v praksi: Odmeven primer uspešne uporabe TDA prihaja s področja biomedicine, kjer je topološka analiza razkrila pomemben nov vzorec v genomskih podatkih raka dojk. Nicolau s sodelavci so leta 2011 uporabili Mapper (v okviru metode Progression Analysis of Disease) za vizualizacijo transkripcijskih mikroarray podatkov tumorjev dojk
+pmc.ncbi.nlm.nih.gov
+. Rezultat je bil graf s tremi „vejnami“, ki predstavljajo različne podtipe raka – med njimi so avtorji odkrili novo podskupino znotraj estrogensko pozitivnih tumorjev (ER+), označeno z izrazito povišano ekspresijo gena c-MYB in znižano ekspresijo skupine vnetnih genov
+pmc.ncbi.nlm.nih.gov
+. Presenetljivo je, da so imele pacientke v tej skupini 100 % stopnjo preživetja in praktično brez metastaz, kar kaže na izjemno nenevaren potek bolezni
+pmc.ncbi.nlm.nih.gov
+. Analiza je to skupino izluščila povsem iz vzorcev genske ekspresije, brez uporabe kakršnih koli vnaprejšnjih kliničnih informacij (npr. podatkov o izidu bolezni)
+pmc.ncbi.nlm.nih.gov
+. Pomembno je poudariti, da je bila ta podskupina pred uporabo TDA nevidna za klasično gručenje – pri običajni grozdni analizi so bili namreč ti tumorji razpršeni med več različnih gruč, zaradi česar njihov skupni signal ni izstopal
+pmc.ncbi.nlm.nih.gov
+. Topološka analiza pa je razkrila, da ti tumorji tvorijo ločeno, izjemno homogeno skupino z jasnim molekularnim podpisom, ki ne ustreza nobenemu od prej znanih podtipov (ni šlo ne za luminalni A/B ne za t. i. normal-like rak)
+pmc.ncbi.nlm.nih.gov
+. Novo odkrito skupino so po glavni značilnosti poimenovali c-MYB+ podtip raka dojk
+pmc.ncbi.nlm.nih.gov
+. Ta primer ponazarja, kako lahko TDA v biomedicinskih podatkih odkrije pomembne skrite vzorce, ki jih tradicionalne metode ne zaznajo, bodisi zaradi šuma bodisi zaradi kompleksnosti podatkov
+pmc.ncbi.nlm.nih.gov
+. Topološka analiza podatkov se tako vse bolj izkazuje kot obetaven pristop za robustno analizo kompleksnih, visokodimenzionalnih podatkovnih množic v znanosti in inženirstvu.
+
+\begin{algorithm}
+\caption{Mapper}\label{alg:mapper2}
+\begin{algorithmic}
+\State{} \textbf{Vhod:} Zbirka (množica) podatkov $X$ z metriko, funkcija $f: X \rightarrow \mathbb{R}$ (ali $\mathbb{R}^d$), in pokritje $\mathcal{U}$ prostora $f(X)$.
+\State{} \textbf{Algoritem:}
+\For{each $U \in \mathcal{U}$}
+    \State{} Razdeli $f^{-1}(U)$  v skupine $C_{U,1}, \ldots, C_{U,k_U}$.
+    \State{} Izračunaj živec pokritja $X$, ki ga definira $\{C_{U,1}, \ldots, C_{U,k_U}\}$ for each $U \in \mathcal{U}$.
+\EndFor{}
+\State{} \textbf{Izhod:} Simplicialni kompleks, živec (pogosto graf za dobro izbrana pokritja):
+\State{} \quad – Vozlišče $v_{U,i}$ za vsako skupino $C_{U,i}$.
+\State{} \quad – Povezava $v_{U,i}$ in $v_{U',j}$ če $C_{U,i} \cap C_{U',j} \neq \emptyset$.
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Algoritem Mapper}\label{alg:mapper}
+\begin{algorithmic}[1]
+\State \textbf{Vhod:} Množica podatkov $X$ z metrikom, 
+    zvezna funkcija $f: X \rightarrow \mathbb{R}$ (ali $f: X \rightarrow \mathbb{R}^d$), 
+    in odprto pokritje $\mathcal{U} = \{U_\alpha\}$ prostora $f(X)$.
+\State \textbf{Postopek:}
+\For{vsak $U_\alpha \in \mathcal{U}$}
+    \State Izračunaj preddsliko $f^{-1}(U_\alpha) \subseteq X$.
+    \State Na $f^{-1}(U_\alpha)$ uporabi metodo gručenja (npr. single-linkage) in razdeli v gruče $C_{\alpha,1}, \ldots, C_{\alpha,k_\alpha}$.
+\EndFor
+\State \textbf{Zgradi simplicialni kompleks (živec pokritja):}
+\State \quad Vozlišča ustrezajo posameznim gručam $C_{\alpha,i}$.
+\State \quad Poveži dve vozlišči $C_{\alpha,i}$ in $C_{\beta,j}$ z robom, če velja $C_{\alpha,i} \cap C_{\beta,j} \neq \emptyset$.
+\State \textbf{Izhod:} Simplicialni kompleks (pogosto graf), ki povzame topološko strukturo podatkov.
+\end{algorithmic}
+\end{algorithm}

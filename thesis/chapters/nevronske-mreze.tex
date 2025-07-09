@@ -1,95 +1,169 @@
 \chapter{Nevronske mreže}
-V tem poglavju bomo ponovili zgradbo in delovanje nevronskih mrež. Osredotočili se bomo le na  usmerjene nevronske mreže (angl.\ feed forward) z vzratnim razširjanjem napake (angl.\ backpropagation); ko bomo omenili nevronsko mrežo bomo imeli v mislih to vrsto.
-Nevronske mreže so nelinearni modeli, katerih osnovni koncept je, da lahko iz linearne kombinacije vhodnih vrednosti, ki jih lahko preslikamo z neko nelinearno funkcijo, dobimo nove vrednosti.~\cite{Hastie2009}
+
+V tem poglavju bomo podrobneje predstavili naprej usmerjene (angl.\ \textit{feedforward}) umetne nevronske mreže, natančneje večnivojske perceptrone (angl.\ \textit{multilayer perceptron}). Zaradi boljše berljivosti bomo v nadaljevanju uporabljali zgolj izraz nevronska mreža. Najprej bomo predstavili osnovne koncepte, nato podali matematični model ter opisali algoritem vzvratnega razširjanja napake.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Zgradba}
-Gradniki nevronskih mrež so nevroni, ki so urejeni v sloje (angl.\ layer).
-Mrežo si lahko predstavljamo kot usmerjen acikličen graf. Povezave med nevroni so utežene in lahko potekajo le v naslednji sloj.
-Vrednost nevrona izračunamo, tako da linearno kombinacijo vrednosti nevronov prejšnjega sloja preslikamo s t.\ i.\ aktivacijsko funkcijo. Ker želimo nelinearen model, je pomembno, da izberemo nelinearno funkcijo. Vrednostim pravimo tudi aktivacije in ta izraz bomo uporabljali v nadaljevanju.
+\section{Osnovni koncepti}
 
-Sloje razdelimo v vhodni, enega ali več skritih in izhodni sloj:
+Umetna nevronska mreža je matematični model, ki posnema delovanje človeških možganov. Predstavljamo si jo lahko kot usmerjen acikličen graf, kjer so vozlišča oziroma nevroni urejeni v zaporedne sloje. Povezave med njimi so utežene in potekajo izključno med nevroni sosednjih slojev, v smeri od prvega (vhodnega) sloja proti zadnjemu (izhodnemu) sloju. Sloje običajno razdelimo na tri tipe:
 \begin{itemize}
-  \item Vhodni sloj, sprejema vhodne podatke in jih posreduje naslednjemu sloju brez sprememb. Število nevronov v tem sloju določa naša vhodna množica.
-  \item Skriti sloji so vsi sloji med vhodnim in izhodnim slojem ter lahko vsebujejo različno število nevronov. Ti sloji opravljajo večino dela in transformacij podatkov.
-  \item Izhodni sloj nam vrne končne vrednosti, ki predstavljajo napoved mreže. Število nevronov v tem sloju je odvisno od vrste problema. Pri regresijskih problemih je to ponavadi samo en nevron, pri klasifikacijskih problemih pa je to običajno en nevron za vsak razred. Aktivacije predstavljajo verjetnosti, da vhod klasificiramo v ta razred.
+  \item \textbf{Vhodni sloj} je prvi sloj, ki sprejme vhodne podatke in jih brez sprememb posreduje skritemu sloju. Število nevronov v tem sloju ustreza dimenziji vhodne množice.
+  \item \textbf{Skriti sloji} se nahajajo med vhodnim in izhodnim slojem ter so odgovorni za večino obdelave podatkov. Njihovo število in velikost se lahko poljubno prilagajata glede na kompleksnost problema.
+  \item \textbf{Izhodni sloj} je zadnji sloj in vrne končni rezultat, ki predstavlja napoved mreže. Število nevronov v tem sloju je odvisno od vrste problema – pri regresiji je to običajno en nevron, pri klasifikaciji pa en nevron za vsak razred. 
 \end{itemize}
-
-% https://commons.wikimedia.org/wiki/File:FeedForwardNN.png
-
-Inspiracija za model nevrona prihaja iz biologije, saj so človeški možgani povezani v mrežo nevronov. V matematičnem modelu povezave predstavljajo sinapse, uteži pa moč povezave. Negativne uteži so zaviralne, pozitivne pa vzpodbujevalne. Aktivnost nevronske celice predstavimo z aktivacijo nevrona.~\cite{10.1007/978-3-319-45378-1_1}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Matematična formulacija}
-Da bomo lahko z nevronsko mrežo računali in opazovali njeno delovanje bomo določene stvari še matematično formulirali. Uporabili bomo naslednjo notacijo:
-\begin{itemize}
-  \item Naj bodo $\{ L^{(i)} \mid i = 0, \dots, k \}$ urejeni sloji,
-  \item $N^{(i)}$ število nevronov na sloju $L^{(i)}$,
-  \item $a^{(i)}_{j}$ aktivacijska funkcija $j$-tega nevrona v $i$-tem sloju,
-  \item $z^{(i)}$ linearna kombinacija nevronov $i-1$-tega sloja za $i = 0, 1, \ldots, k$, kjer je $z^{(0)}$ vhodni podatek,
-  \item $h^{(i)}$ aktivacija nevronov na i-tem sloju za $i = 1, \ldots, k$, kjer je $h^{(0)}$ vhodni podatek, $h^{(k)}$ rezultat,
-  \item $W^{(i)}$ matrika \(m \times n\) uteži na $i$-tem sloju, kjer je $m$ število nevronov v $i$-tem sloju in $n$ število nevronov v predhodnem sloju.
-\end{itemize}
-
-\[
-  W^{(i)} = \begin{bmatrix}
-    w^{(i)}_{11} & w^{(i)}_{12} & \cdots & w^{(i)}_{1n} \\
-    w^{(i)}_{21} & w^{(i)}_{22} & \cdots & w^{(i)}_{2n} \\
-    \vdots       & \vdots       & \ddots & \vdots       \\
-    w^{(i)}_{m1} & w^{(i)}_{m2} & \cdots & w^{(i)}_{mn}
-  \end{bmatrix}
-\] \\
-
-Aktivacije nevronov za sloje $i = 1, 2, \ldots, k$ izračunamo po formuli:
-\begin{equation}
-  h^{(i)} = a^{(i)}(W^{(i)} \cdot h^{(i - 1)})
-\end{equation}
-
-\begin{comment}
-\begin{equation}
-  h^{(i)} =
-  \begin{cases}
-    a^{(i)}(W^{(i)} \cdot h^{(i - 1)}), & \text{if } i = 2, \ldots, k \\
-    a^{(i)}(W^{(i)} \cdot h^{(i - 1)}), & \text{if } i = 1
-  \end{cases}
-\end{equation}
-\end{comment}
-
-Aktivacijsko funkcijo $a^{(i)}$ definiramo po komponentah. Rezultat nevronske mreže, torej predstavlja zadnji sloj, ki ga lahko s pomočjo zgornje zveze rekurzivno izračunamo:
-\begin{equation}
-  h^{(k)} = a(W^{(k - 1)} \cdot h^{(k - 1)})
-  \label{eq:eq1}
-\end{equation}
-Ustavitveni pogoj je $h^{(0)}$, ki je vhodni podatek.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Učenje nevronske mreže}
-V razdelku bomo opisali algoritem vzratnega razširjanja napake, ki je verjetno eden izmed najbolj študiranih algoritmov učenja nevronskih mrež. Sledili bomo razlagi~\cite{rojas1996backpropagation}.
-Učenje v nevronski mreži poteka s prilagajanjem uteži tako, da minimiziramo razlike med dejanskimi izhodnimi vrednostmi in tistimi, ki jih mreža napove. Temu pravimo nadzorovano učenje, kjer imamo podano učno množico podatkov v obliki parov vektorjev vhodnih in izhodnih vrednosti: $\left\{ (x_i, t_i) \mid i = 1, \ldots, p \right\}$ in iz njih lahko izračunamo napako izhodnega sloja:
-\begin{equation}
-  E = \frac{1}{2} \sum_{i=1}^{p} \|\mathbf{o}_i - \mathbf{t}_i\|^2
-\end{equation}
-Z $o_{i}$ smo označili izhodne vrednosti ki jih vrne mreža. Ker pa je izhod nevronske mreže pravzaprav funkcija uteži~\ref{eq:eq1}, je tudi $E$ funkcija uteži. Ker Želimo funkcijo napake minimizirati, potrebujemo gradient. Začnemo z zadnjim slojem:
-\begin{equation}
-  \nabla E = \left( \frac{\partial E}{\partial w^{(k)}_1}, \frac{\partial E}{\partial w^{(k)}_2}, \ldots, \frac{\partial E}{\partial w^{(k)}_m} \right)
-\end{equation}
-Poskrbeti moramo, še da bo aktivacijska funkcija $a$ odvedljiva, pogosta izbira je sigmoidna funkcija:
-\begin{equation}
-  \sigma(x) = \frac{1}{1 + e^{-x}}.
-\end{equation}
-Katere odvod je
-\begin{equation}
-  \frac{d}{dx}\sigma(x) = \frac{e^{-x}}{\left(1+e^{-x}\right){}^2} = \sigma(x)\left(1 - s(x)\right).
-\end{equation}
-Sedaj si bo lažje predstavaljati rezultat nevronske mreže in funkcijo napake kot kompozitum velikega števila funkcij in ne več kot rekurzivno funkcijo. Razlog za to je, da bomo lahko pri računanju gradienta uporabili verižno pravilo odvajanja. Uteži nato spreminjamo z metodo gradientnega spusta, ki iterativno zmanjšuje vrednosti uteži v nasprotni smeri vektorja gradienta, dokler ne najde minimuma. Tako se uteži popravijo na zunanjem sloju in nato nadaljujemo s predhodnjim slojem, dokler ne pridemo do začetka. V zadnjem sloju lahko neposredno primerjamo napovedan izhod z dejanskim izhodom, da izračunamo gradient. V skritih slojih pa se gradient izračuna na podlagi gradienta sloja pred njim, od tod izvira ime vzratno razširjanje napake.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{resources/backpropagation.jpeg}
-  \caption{Vzratno razširjanje napake. Vir:~\cite{electronics10212689}}~\label{fig:backprop}
+  \input{resources/tikz/nn-layers.tex}
+  \caption{Sloji v nevronski mreži}~\label{fig:nn-layers}
 \end{figure}
 
-Od sedaj naprej nas bo samo zanimala evolucija uteži v procesu učenja. Na posameznih slojih bomo opazovali vektorje uteži za vsak nevron, ki jih bomo interpretirali kot točke v visoko dimenzionalnem prostoru. Za vsak sloj $i$ so to  ravno vrstice v matriki uteži $W^{(i)}$. Ker pa si visoko dimenzionalnih prostorov ne moremo predstavljati, se bomo v naslednjem razdelku ukvarjali s tem kako točke preslikati v nižje dimenzionalni prostor s čim manjšo izgubo informacij.
+Izhodno vrednost nevrona imenujemo aktivacija. Vsak nevron sprejme aktivacije nevronov iz prejšnjega sloja (oziroma vhodne podatke, če gre za prvi sloj) in iz teh vrednosti izračuna uteženo vsoto. Dobljeni rezultat nato preslika s t.\,i.\ aktivacijsko funkcijo, ki je praviloma nelinearna. Nelinearne aktivacijske funkcije so ključne, saj le tako zagotovimo nelinearnost celotnega modela. Da bi utežena vsota lahko vsebovala tudi konstantni člen, v vsak sloj razen izhodnega dodamo nevron s konstantno aktivacijo ena.
+
+\begin{figure}[H]
+  \centering
+  \input{resources/tikz/nn-bias.tex}
+  \caption{Nevron s konstantno aktivacijo}~\label{fig:nn-bias}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Matematični model}
+
+V nadaljevanju uvedemo notacijo, ki je pogosto uporabljena v literaturi s področja umetne inteligence (npr.~v~\cite{Hastie2009}). Takšna formalna notacija omogoča dosledno predstavitev nevronskih mrež.
+
+Naj bo nevronska mreža sestavljena iz $k+1$ slojev, označenih z $L^{(0)}, L^{(1)}, \dots, L^{(k)}$, kjer je $L^{(0)}$ vhodni sloj, $L^{(k)}$ pa izhodni sloj. Vsak sloj $L^{(i)}$ vsebuje $N^{(i)}$ nevronov, za $i = 0, \dots, k$. Vhod v mrežo predstavimo z vektorjem $x \in \mathbb{R}^{N^{(0)}}$, ki vsebuje $N^{(0)}$ komponent in služi kot začetna aktivacija v vhodnem sloju.
+
+Za sloje nevronske mreže uvedemo naslednje pojme:
+\begin{itemize}
+  \item $a^{(i)}$ – aktivacijska funkcija v sloju $L^{(i)}$ (za $i = 1, \dots, k$).
+  \item $h^{(i)} = \big(h^{(i)}_1, h^{(i)}_2, \dots, h^{(i)}_{N^{(i)}}\big)$ – vektor aktivacij v sloju $L^{(i)}$ (za $i = 0, \dots, k$). Za vhodni sloj velja $h^{(0)} = x$.
+  \item $z^{(i)} = \big(z^{(i)}_1, z^{(i)}_2, \dots, z^{(i)}_{N^{(i)}}\big)$ – vektor uteženih vsot v sloju $L^{(i)}$ (za $i = 1, \dots, k$), pri čemer vsaka komponenta predstavlja vsoto uteženih vhodov za posamezen nevron:
+  \[
+    z^{(i)}_j = \sum_{\ell=1}^{N^{(i-1)}} w^{(i)}_{j\ell}\, h^{(i-1)}_\ell + b^{(i)}_j, \quad \text{za } j = 1, \dots, N^{(i)}.
+  \]
+  \item $W^{(i)}$ – matrika uteži dimenzije $N^{(i)} \times N^{(i-1)}$, ki povezuje sloj $L^{(i-1)}$ s slojem $L^{(i)}$ (za $i = 1, \dots, k$):
+  \[
+    W^{(i)} = \begin{bmatrix}
+      w^{(i)}_{1,1} & w^{(i)}_{1,2} & \cdots & w^{(i)}_{1,N^{(i-1)}} \\
+      w^{(i)}_{2,1} & w^{(i)}_{2,2} & \cdots & w^{(i)}_{2,N^{(i-1)}} \\
+      \vdots       & \vdots       & \ddots & \vdots               \\
+      w^{(i)}_{N^{(i)},1} & w^{(i)}_{N^{(i)},2} & \cdots & w^{(i)}_{N^{(i)},N^{(i-1)}}
+    \end{bmatrix}
+  \]
+
+  \item $b^{(i)} = \left(b^{(i)}_1, b^{(i)}_2, \dots, b^{(i)}_{N^{(i)}}\right)$ je vektor uteži nevronov s konstantno aktivacijo (angl.\ bias) za sloj $L^{(i)}$, za $i = 1, \dots, k$.
+\end{itemize}
+
+Aktivacije v sloju $L^{(i)}$ izračunamo s pomočjo aktivacijske funkcije $a^{(i)}$, ki jo uporabimo na vsaki komponenti:
+\[
+  h^{(i)}_j = a^{(i)}\!\big(z^{(i)}_j\big), \quad \text{za } j = 1, \dots, N^{(i)}\,,
+\] 
+pri čemer je $z^{(i)} = W^{(i)}\,h^{(i-1)} + b^{(i)}$, začetna aktivacija pa je $h^{(0)} = x$. Postopek se nato iterativno izvede za sloje $i = 1, \dots, k$, končni izhod mreže pa je $h^{(k)}$.
+
+Za dano zaporedje parametrov $\{(W^{(i)}, b^{(i)}, a^{(i)})\}_{i=1}^k$ (kjer je $W^{(i)}$ matrika uteži, $b^{(i)}$ vektor pristranskosti in $a^{(i)}$ aktivacijska funkcija v sloju $L^{(i)}$) lahko izhod mreže za vhod $x \in \mathbb{R}^d$ zapišemo rekurzivno:
+\[
+  h^{(0)} = x,\qquad 
+  h^{(i)} = a^{(i)}\!\big(W^{(i)}\,h^{(i-1)} + b^{(i)}\big), \quad i = 1, \dots, k\,,
+\]
+tako da je končni izhod mreže $h^{(k)} \in \mathbb{R}^{N^{(k)}}$, pri čemer $N^{(k)}$ določa število izhodnih nevronov.
+
+To rekurzivno predstavitev bomo izkoristili pri izpeljavi algoritma povratnega razširjanja, kjer bomo izraze $\partial \mathcal{L} / \partial W^{(i)}$ izračunali v obratnem vrstnem redu.
+
+\begin{figure}[H]
+  \centering
+  \scalebox{0.85}{\input{resources/tikz/nn-activation.tex}}
+  \caption{Aktivacija nevrona v prvem sloju}~\label{fig:nn-activation}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Aktivacijske funkcije}
+
+Aktivacijske funkcije so nelinearne preslikave, ki uteženo vsoto aktivacij nevronov iz prejšnjega sloja pretvorijo v izhodno aktivacijo nevrona. Z njihovo uporabo v nevronsko mrežo vnašamo nelinearnost, kar je ključno za učenje kompleksnih vzorcev. Brez njih bi bila nevronska mreža zgolj linearni model, neuporaben za večino praktičnih nalog, saj lahko linearne modele predstavimo kot sisteme linearnih enačb. Aktivacijska funkcija torej določa, kako močno se bo posamezen nevron odzval na dani vhod.
+
+\subsection*{Pogoste aktivacijske funkcije}
+
+\begin{itemize}
+  \item \textbf{Sigmoid:}
+  \[
+    \sigma(x) = \frac{1}{1 + e^{-x}}\,.
+  \]
+  Zgladi vhod v interval $[0, 1]$. Pogosto se uporablja v izhodnem sloju pri binarni klasifikaciji, lahko pa povzroča izginjanje gradientov, saj se pri ekstremnih vhodnih vrednostih aktivacija nasiči.
+  \item \textbf{Tanh:}
+  \[
+    \tanh(x) = \frac{e^x - e^{-x}}{\,e^x + e^{-x}}\,.
+  \]
+  Vrne vrednosti v intervalu $[-1, 1]$, kar omogoča simetrično učenje. V primerjavi s sigmoidom ima ničelno izhodno vrednost za $x=0$, vendar se prav tako sooča s težavo nasičenja pri ekstremnih vrednostih.
+  \item \textbf{ReLU (Rectified Linear Unit):}
+  \[
+    \text{ReLU}(x) = \max(0, x)\,. 
+  \]
+  Najpogosteje uporabljena aktivacijska funkcija v skritih slojih. Izračun je hiter in enostaven, lahko pa povzroči t.\,i.\ »mrtve« nevrone, saj za negativne vhodne vrednosti vrača nič (nevron se na tak vhod ne odzove).
+  \item \textbf{Leaky ReLU:}
+  \[
+    \text{Leaky ReLU}(x) = \max(\alpha x, x), \quad \alpha > 0\,.
+  \]
+  Omogoča majhen, a neničelen gradient tudi pri negativnih vhodih in s tem zmanjšuje možnost »mrtvih« nevronov.
+  \item \textbf{Softmax:}
+  \[
+    \text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}\,. 
+  \]
+  Pretvori vektor vhodnih vrednosti v porazdelitev verjetnosti. Običajno se uporablja v izhodnem sloju za večrazredno klasifikacijo.
+\end{itemize}
+
+Izbira aktivacijske funkcije pomembno vpliva na učinkovitost učenja. ReLU in njegove različice so danes najpogostejša izbira za skrite sloje, medtem ko v izhodnih slojih prevladujeta sigmoid ali softmax (glede na vrsto naloge). Aktivacijske funkcije ne vplivajo le na zmogljivost mreže, temveč tudi na to, kako učinkovito in stabilno poteka učenje z gradientnim spustom.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Vzvratno razširjanje napake}
+
+Vzvratno razširjanje (angl.~\textit{backpropagation}) je najbolj razširjen algoritem za učenje večnivojskih nevronskih mrež. Gre za metodo nadzorovanega učenja, kjer s pomočjo znanih vhodno-izhodnih parov podatkov postopno prilagajamo parametre mreže, da se izhod mreže čim bolj približa želenim vrednostim. Algoritem temelji na minimizaciji \textit{funkcije napake} (tudi \textit{kriterijske funkcije}) z uporabo gradientnega spusta. Širšo pozornost je postopek pritegnil z delom Rumelharta, Hintona in Williamsa leta 1986~\cite{Rumelhart1986}.
+
+Predpostavimo, da imamo učno množico s $p$ primeri, predstavljeno z matriko $X \in \mathbb{R}^{p \times N^{(0)}}$. Vsaka vrstica $x_i \in \mathbb{R}^{N^{(0)}}$ (za $i = 1, \dots, p$) predstavlja en vhodni vektor. Naj bo $Y \in \mathbb{R}^{p \times N^{(k)}}$ matrika pripadajočih ciljnih izhodov, kjer vsak vrstični vektor $y^{(i)}$ predstavlja želen (ciljni) izhod za vhod $x_i$. Uteži in pristranskosti v mreži najprej inicializiramo naključno, nato pa jih med učenjem postopoma prilagajamo.
+
+Cilj učenja je najti tak nabor uteži $W$, da bo izhodni vektor mreže za vsak vhod $x_i$ čim bližje ustreznemu ciljnemu vektorju $y^{(i)}$. To dosežemo z minimizacijo skupne napake na učni množici, ki jo lahko izrazimo kot vsoto kvadratov odstopanj med dejanskimi in želenimi vrednostmi izhodov. Ena od pogostih izbir je \textit{povprečna kvadratična napaka}. Za $p$ učnih primerov jo zapišemo kot:
+\[
+  E = \frac{1}{2} \sum_{i=1}^{p} \sum_{j=1}^{N^{(k)}} \big(y_{j}^{(i)} - d_{j}^{(i)}\big)^2\,,
+\] 
+kjer $d_{j}^{(i)}$ predstavlja $j$-to ciljno komponento (iz matrike $Y$) za $i$-ti primer, $y_{j}^{(i)}$ pa ustrezno komponento izhodnega vektorja, ki ga mreža vrne za vhod $x_i$. Faktor $\frac{1}{2}$ je vključen zaradi matematične priročnosti (odvod kvadratne funkcije se tako poenostavi).
+
+Za uspešno učenje z gradientnim spustom moramo izračunati parcialne odvode (gradient) funkcije napake $E$ glede na vse parametre (uteži in pristranskosti) v mreži. Pri tem uporabimo verižno pravilo, postopek pa poteka v dveh fazah:
+\begin{enumerate}
+  \item \textbf{Razširjanje naprej:} za dan vhod $x$ izračunamo aktivacije vseh slojev ($h^{(1)}, h^{(2)}, \dots, h^{(k)}$) in s tem dobimo izhod modela $y = h^{(k)}(x)$. To vrednost primerjamo z želenim izhodom.
+  \item \textbf{Razširjanje nazaj:} na podlagi razlike med izhodom mreže in ciljno vrednostjo najprej izračunamo napako na izhodu, nato pa jo s pomočjo verižnega pravila razširimo nazaj po mreži. Tako dobimo odvode $\partial E / \partial W^{(i)}$ in $\partial E / \partial b^{(i)}$ za vse sloje ($i = 1, \dots, k$). 
+\end{enumerate}
+
+V nadaljevanju so zbrani ključni izrazi za izračun gradienta pri enem poljubnem učnem primeru $(x, d)$, kjer $d$ označuje ciljni izhod, $y = h^{(k)}(x)$ pa izhod nevronske mreže:
+\begin{itemize}
+  \item \textbf{Izhodni sloj:}
+  \[
+    \frac{\partial E}{\partial y_j} = y_j - d_j,\qquad 
+    \frac{\partial E}{\partial x_j} = (y_j - d_j)\, f'(x_j)\,,
+  \]
+  kjer je $f'(x_j)$ odvod aktivacijske funkcije (npr.\ za sigmoidno funkcijo $f'(x_j) = y_j (1 - y_j)$).
+  \item \textbf{Gradient po utežeh in pristranskosti:}
+  \[
+    \frac{\partial E}{\partial w_{ji}} = \frac{\partial E}{\partial x_j} \cdot h^{(k-1)}_i,\qquad 
+    \frac{\partial E}{\partial b_j} = \frac{\partial E}{\partial x_j}\,. 
+  \]
+  \item \textbf{Skriti sloji:}
+  \[
+    \frac{\partial E}{\partial h_j} = \sum_{k} \frac{\partial E}{\partial x_k} \cdot w_{jk},\qquad 
+    \frac{\partial E}{\partial x_j} = \frac{\partial E}{\partial h_j} \cdot f'(x_j)\,. 
+  \]
+\end{itemize}
+
+Na koncu posodobimo uteži z gradientnim spustom:
+\[
+  w_{ji} := w_{ji} - \epsilon \, \frac{\partial E}{\partial w_{ji}}\!,
+\] 
+pri čemer je $\epsilon$ hitrost učenja, ali pa z dodatkom momenta:
+\[
+  \Delta w_{ji}(t) = -\epsilon \, \frac{\partial E}{\partial w_{ji}}(t) + \alpha\, \Delta w_{ji}(t-1),\qquad 
+  w_{ji}(t+1) := w_{ji}(t) + \Delta w_{ji}(t)\!,
+\] 
+kjer je $\alpha$ parameter inercije.
+
+Opisani postopek omogoča učenje mrež z več zaporednimi plastmi brez potrebe po izračunu drugega odvoda funkcije napake. Ključni dejavniki pri uspešnem učenju so primerna izbira arhitekture in aktivacijskih funkcij ter ustrezna inicializacija uteži (s čimer razbijemo morebitno simetrijo med nevroni). Skrite plasti z nelinearnimi aktivacijami omogočajo mreži učenje kompleksnih vzorcev, povratno razširjanje napake pa poskrbi, da se mreža na podlagi napak postopoma izboljšuje.
